@@ -1,3 +1,2 @@
-# React(Next.js) ✖️ Flask Template
-ハッカソンで勝とう！！！！！！！# kawanakute-yokatta
-# kawanakute-yokatta
+# 買わなくて良かった
+馬券代節約アプリ
