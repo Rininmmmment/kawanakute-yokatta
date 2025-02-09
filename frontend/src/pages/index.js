@@ -1,14 +1,18 @@
+import { useState } from "react";
 import Head from "next/head";
-import Image from "next/image";
 import Auth from "../components/Auth";
+import Top from "../components/Top";
+import Payment from "../components/Payment";
 import styles from '@/styles/Home.module.css';
-import yenPic from "/public/images/yen.svg";
-import horsePic from "/public/images/horse.svg";
-import analyzePic from "/public/images/analyze.svg";
-import settingPic from "/public/images/setting.svg";
-
 
 export default function Home() {
+    const [displayTarget, setdisplayTarget] = useState("top");
+
+    // 子コンポーネントからクリックされたボタンの情報を受け取る
+    const handleButtonClick = (buttonName) => {
+        setdisplayTarget(buttonName);
+    };
+
     return (
         <>
             <Head>
@@ -16,7 +20,7 @@ export default function Home() {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div>
+            <div>{displayTarget}
                 <header className={styles.header}>
                     <h1>買わなくて良かった</h1>
                     <div>
@@ -24,48 +28,17 @@ export default function Home() {
                     </div>
                 </header>
                 <main>
-                    <div className={styles.mainInfo}>
-                        <h2>回収 __ %</h2>
-                        <h2>収支 __ 円</h2>
-                        <h3>購入限度 __ 円</h3>
-                    </div>
-                    <div>
-                        <div className={styles.menuContainer}>
-                            <div className={styles.menuBtn}>
-                                <a href="#">
-                                    <Image src={yenPic} alt="Profile Picture" width={50} height={50} />
-                                    <p>入出金</p>
-                                </a>
-                            </div>
-                        </div>
-                        <div className={styles.menuContainer}>
-                            <div className={styles.menuBtn}>
-                                <a href="#">
-                                    <Image src={horsePic} alt="Profile Picture" width={50} height={50} />
-                                    <p>通常投票</p>
-                                </a>
-                            </div>
-                            <div className={styles.menuBtn}>
-                                <a href="#">
-                                    <Image src={analyzePic} alt="Profile Picture" width={50} height={50} />
-                                    <p>照会</p>
-                                </a>
-                            </div>
-                        </div>
-                        <div className={styles.menuContainer}>
-                            <div className={styles.menuBtn}>
-                                <a href="#">
-                                    <Image src={settingPic} alt="Profile Picture" width={50} height={50} />
-                                    <p>設定</p>
-                                </a>
-                            </div>
-                        </div>
-
-                    </div>
-                </main>
+                    {displayTarget != "top" && <button onClick={() => handleButtonClick("top")}>トップに戻る</button>}
+                    {displayTarget === "top" && <Top onButtonClick={handleButtonClick} />}
+                    {displayTarget === "payment" && <Payment />}
+                    {/* {displayTarget === "top" && <Top onButtonClick={handleButtonClick} />}
+                    {displayTarget === "top" && <Top onButtonClick={handleButtonClick} />}
+                    {displayTarget === "top" && <Top onButtonClick={handleButtonClick} />} */}
+                    {/* <Payment /> */}
+                </main >
                 <footer >
                 </footer>
-            </div>
+            </div >
         </>
     );
 }
