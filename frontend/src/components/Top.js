@@ -12,15 +12,25 @@ import analyzePic from "/public/images/analyze.svg";
 import settingPic from "/public/images/setting.svg";
 
 export default function Top({ onButtonClick }) {
-    const currentUserId = getCurrentUserId();
+    const [currentUserId, setCurrentUserId] = useState(null);
     const [balance, setBalance] = useState(null);
 
-    // 残金を状態にセット
+    // ユーザーIDを取得
+    getCurrentUserId().then((userId) => {
+        setCurrentUserId(userId);
+    });
+
+    // currentUserId が取得できたら balance を取得
     useEffect(() => {
         const fetchBalance = async () => {
-            const balanceData = await getBalance(currentUserId);
-            setBalance(balanceData);
+            try {
+                const balanceData = await getBalance(currentUserId);
+                setBalance(balanceData);
+            } catch (error) {
+                console.error("残高の取得に失敗しました:", error);
+            }
         };
+
         fetchBalance();
     }, [currentUserId]);
 

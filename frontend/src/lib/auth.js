@@ -1,5 +1,5 @@
 // lib/auth.js
-import { GoogleAuthProvider, signInWithPopup, signOut, getAuth } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 
 export const signInWithGoogle = async () => {
@@ -21,7 +21,11 @@ export const logout = async () => {
 };
 
 // 現在のユーザーIDを取得
-export const getCurrentUserId = () => {
-    const user = auth.currentUser;
-    return user ? user.uid : null;  // ログインしていればユーザーIDを返す
+export const getCurrentUserId = async () => {
+    return new Promise((resolve) => {
+        onAuthStateChanged(auth, (user) => {
+            resolve(user ? user.uid : null);
+        });
+    });
 };
+
