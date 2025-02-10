@@ -6,8 +6,13 @@ import { useState } from "react";
 import styles from '@/styles/Payment.module.css';
 
 export default function Payment({ onButtonClick }) {
-    const currentUserId = getCurrentUserId();
+    const [currentUserId, setCurrentUserId] = useState(null);
     const [deposit, setdeposit] = useState("0");
+
+    // ユーザーIDを取得
+    getCurrentUserId().then((userId) => {
+        setCurrentUserId(userId);
+    });
 
     const handleDepositChange = (event) => {
         const value = event.target.value;
@@ -17,8 +22,8 @@ export default function Payment({ onButtonClick }) {
     };
 
     const handleFormSubmit = (event) => {
-        onButtonClick(deposit);
         upsertBalance(event, currentUserId, deposit);
+        onButtonClick(deposit);
     };
 
     return (
