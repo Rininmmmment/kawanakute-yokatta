@@ -3,6 +3,7 @@ import Head from "next/head";
 import Auth from "../components/Auth";
 import Top from "../components/Top";
 import Payment from "../components/Payment";
+import Vote from "../components/Vote";
 import styles from '@/styles/Home.module.css';
 
 export default function Home() {
@@ -31,10 +32,7 @@ export default function Home() {
                     {displayTarget != "top" && <button onClick={() => handleButtonClick("top")}>トップに戻る</button>}
                     {displayTarget === "top" && <Top onButtonClick={handleButtonClick} />}
                     {displayTarget === "payment" && <Payment />}
-                    {/* {displayTarget === "top" && <Top onButtonClick={handleButtonClick} />}
-                    {displayTarget === "top" && <Top onButtonClick={handleButtonClick} />}
-                    {displayTarget === "top" && <Top onButtonClick={handleButtonClick} />} */}
-                    {/* <Payment /> */}
+                    {displayTarget === "vote" && <Vote />}
                 </main >
                 <footer >
                 </footer>

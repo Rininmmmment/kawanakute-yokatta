@@ -1,0 +1,20 @@
+.voteListContainer {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-spacing: 0;
+}
+
+.voteListItem {
+    border-bottom: 1px solid;
+    padding: 10px 20px;
+}
+
+.voteListItem:hover {
+    cursor: pointer;
+}
+
+.voteListItem:first-child {
+    border-top: 1px solid;
+    /* 最初のアイテムには上部ボーダーを付けない */
+}
