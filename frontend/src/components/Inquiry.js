@@ -6,7 +6,7 @@ import Constants from '../constants/constants';  // パスはファイルの場�
 
 export default function Inquiry({ userId, balance }) {
     const [display, setDisplay] = useState("menu");
-    const [tickets, settickets] = useState("menu");
+    const [tickets, settickets] = useState([]);
 
     const handleMenuClick = (event) => {
         const clickedItemValue = event.target.dataset.value;
