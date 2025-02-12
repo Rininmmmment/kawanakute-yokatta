@@ -1,7 +1,7 @@
 import Title from "../components/Title";
 import { getTodayTickets } from "../lib/vote";
 import { useState, useEffect } from "react";
-import Constants from '../constants/Constants';  // パスはファイルの場所に応じて調整してください
+import Constants from '../constants/constants';  // パスはファイルの場所に応じて調整してください
 
 
 export default function Inquiry({ userId, balance }) {
