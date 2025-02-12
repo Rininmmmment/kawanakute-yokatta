@@ -19,8 +19,7 @@ export const getBalance = async (userId) => {
 };
 
 // 残金項目をupsertする関数
-export const upsertBalance = async (event, userId, balance) => {
-    event.preventDefault();
+export const upsertBalance = async (userId, balance) => {
     const balanceData = await getBalance(userId);
     const userDocRef = doc(db, "money", userId);
     try {

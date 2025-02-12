@@ -1,4 +1,4 @@
-export default function PaymentCompleted({ deposit, }) {
+export default function PaymentCompleted({ deposit, userId, balance }) {
     // 子コンポーネントからクリックされたボタンの情報を受け取る
     const handleButtonClick = (buttonName) => {
         setdisplayTarget(buttonName);

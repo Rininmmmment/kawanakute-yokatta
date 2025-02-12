@@ -1,32 +1,54 @@
 import Title from "../components/Title";
-import { getCurrentUserId } from "../lib/auth";
-import { useState } from "react";
+import { insertTicket } from "../lib/vote";
+import { upsertBalance } from "../lib/payment";
+import { useState, useEffect } from "react";
 import styles from '@/styles/Vote.module.css';
 
 
-export default function Vote() {
+export default function Vote({ userId, balance }) {
     const [display, setDisplay] = useState(0);
-    const [currentUserId, setCurrentUserId] = useState(null);
-    const [deposit, setdeposit] = useState("0");
-
     const [racetrack, setRacetrack] = useState(null);
-    const [raceDate, setRaceDate] = useState(null);
     const [raceNum, setRaceNum] = useState(null);
     const [ticketType, setTticketType] = useState(null);
     const [buyType, setBuyType] = useState(null);
     const [horse, setHorse] = useState(null);
+    const [price, setPrice] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
+    const [isDisable, setIsDisable] = useState(false);
 
-    // ユーザーIDを取得
-    getCurrentUserId().then((userId) => {
-        setCurrentUserId(userId);
-    });
+    // 購入金額入力取得
+    const handlePriceChange = (event) => {
+        const value = event.target.value;
+        if (!isNaN(value) || value === "") {
+            setPrice(value * 100);
+        }
+    };
+
+    // セットクリック時（=購入時）
+    const handleBtnClick = async () => {
+        if (balance >= price) {
+            setErrorMsg("");
+            try {
+                setIsDisable(true);
+                await insertTicket(userId, racetrack, raceNum, ticketType, buyType, horse, price);  // 馬券購入
+                await upsertBalance(userId, -1 * price);  // 残金減らす
+                setIsDisable(false);  // 連打防止
+                setDisplay(display + 1);
+            } catch (error) {
+                console.error("挿入に失敗しました:", error);
+                setErrorMsg("処理に失敗しました");
+            }
+        }
+        else {
+            setErrorMsg("お金が足りないよ");
+        }
+    }
 
     // 競馬場
     const handleRacetrackClick = (event) => {
         const clickedItemValue = event.target.dataset.value;
         setRacetrack(clickedItemValue);
         setDisplay(display + 1);
-        console.log(clickedItemValue);  // クリックしたアイテムのテキストを表示
     };
 
     // レース
@@ -34,7 +56,6 @@ export default function Vote() {
         const clickedItemValue = event.target.dataset.value;
         setRaceNum(clickedItemValue);
         setDisplay(display + 1);
-        console.log(clickedItemValue);  // クリックしたアイテムのテキストを表示
     };
 
     // 式別
@@ -42,7 +63,6 @@ export default function Vote() {
         const clickedItemValue = event.target.dataset.value;
         setTticketType(clickedItemValue);
         setDisplay(display + 1);
-        console.log(clickedItemValue);  // クリックしたアイテムのテキストを表示
     };
 
     // 方式
@@ -50,7 +70,6 @@ export default function Vote() {
         const clickedItemValue = event.target.dataset.value;
         setBuyType(clickedItemValue);
         setDisplay(display + 1);
-        console.log(clickedItemValue);  // クリックしたアイテムのテキストを表示
     };
 
     // 単勝/複勝馬
@@ -58,7 +77,6 @@ export default function Vote() {
         const clickedItemValue = event.target.dataset.value;
         setHorse(clickedItemValue);
         setDisplay(display + 1);
-        console.log(clickedItemValue);  // クリックしたアイテムのテキストを表示
     };
 
     const handleBack = () => {
@@ -67,7 +85,7 @@ export default function Vote() {
 
     return (
         <>
-            {display !== 0 &&
+            {display !== 0 && display !== 5 &&
                 <div>
                     <button onClick={handleBack}>戻る</button>
                 </div>
@@ -76,8 +94,9 @@ export default function Vote() {
                 <>
                     <Title title="競馬場" />
                     <ul className={styles.voteListContainer}>
-                        <li onClick={handleRacetrackClick} className={styles.voteListItem}>中山</li>
-                        <li onClick={handleRacetrackClick} className={styles.voteListItem}>阪神</li>
+                        <li onClick={handleRacetrackClick} className={styles.voteListItem} data-value="中山">中山</li>
+                        <li onClick={handleRacetrackClick} className={styles.voteListItem} data-value="阪神">阪神</li>
+                        <li onClick={handleRacetrackClick} className={styles.voteListItem} data-value="中京">中京</li>
                     </ul>
                 </>
             }
@@ -85,8 +104,9 @@ export default function Vote() {
                 <>
                     <Title title="レース" />
                     <ul className={styles.voteListContainer}>
-                        <li onClick={handleRaceNumClick} className={styles.voteListItem} data-value="11">11R</li>
-                        <li onClick={handleRaceNumClick} className={styles.voteListItem} data-value="12">12R</li>
+                        {[...Array(12)].map((_, index) => (
+                            <li key={index + 1} onClick={handleRaceNumClick} className={styles.voteListItem} data-value={index + 1}>{index + 1}R</li>
+                        ))}
                     </ul>
                 </>
             }
@@ -106,12 +126,13 @@ export default function Vote() {
             }
 
             {/* 単/複勝の場合馬選択 */}
-            {display === 3 && (ticketType === "win") || (ticketType === "place") &&
+            {display === 3 && ((ticketType === "win") || (ticketType === "place")) &&
                 <>
                     <Title title={ticketType === "win" ? "単勝" : "複勝"} />
                     <ul className={styles.voteListContainer}>
-                        <li onClick={handleHorseClick} className={styles.voteListItem} data-value="1">1: サクラトゥジュール</li>
-                        <li onClick={handleHorseClick} className={styles.voteListItem} data-value="2">2: メイショウチタン</li>
+                        {[...Array(12)].map((_, index) => (
+                            <li onClick={handleHorseClick} className={styles.voteListItem} data-value={index + 1}>{index + 1}</li>
+                        ))}
                     </ul>
                 </>
             }
@@ -135,6 +156,50 @@ export default function Vote() {
                         <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="11">通常</li>
                         <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="12">軸一頭ながし</li>
                     </ul>
+                </>
+            }
+
+            {/* 確認画面 */}
+            {display === 4 &&
+                <>
+                    <Title title="金額入力" />
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>競馬場</td>
+                                <td>{racetrack}</td>
+                            </tr>
+                            <tr>
+                                <td>レース</td>
+                                <td>{raceNum}R</td>
+                            </tr>
+                            <tr>
+                                <td>式別</td>
+                                <td>{ticketType}</td>
+                            </tr>
+                            <tr>
+                                <td>馬番</td>
+                                <td>{horse}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <span>金額</span>
+                        <input type="text" onChange={handlePriceChange} />
+                        <span>00円</span>
+                        <p>{errorMsg}</p>
+                        <button
+                            disabled={isDisable}
+                            onClick={handleBtnClick}>セット
+                        </button>
+                    </div>
+                </>
+            }
+
+            {/* 確認画面 */}
+            {display === 5 &&
+                <>
+                    <p>購入が完了しました</p>
                 </>
             }
         </>

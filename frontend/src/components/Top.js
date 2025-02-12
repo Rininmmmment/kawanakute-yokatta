@@ -1,39 +1,11 @@
 import Image from "next/image";
-import { getCurrentUserId } from "../lib/auth";
-
-import { getBalance } from "../lib/payment";
-import { useState, useEffect } from "react";
-
-
 import styles from '@/styles/Home.module.css';
 import yenPic from "/public/images/yen.svg";
 import horsePic from "/public/images/horse.svg";
 import analyzePic from "/public/images/analyze.svg";
 import settingPic from "/public/images/setting.svg";
 
-export default function Top({ onButtonClick }) {
-    const [currentUserId, setCurrentUserId] = useState(null);
-    const [balance, setBalance] = useState(null);
-
-    // ユーザーIDを取得
-    getCurrentUserId().then((userId) => {
-        setCurrentUserId(userId);
-    });
-
-    // currentUserId が取得できたら balance を取得
-    useEffect(() => {
-        const fetchBalance = async () => {
-            try {
-                const balanceData = await getBalance(currentUserId);
-                setBalance(balanceData);
-            } catch (error) {
-                console.error("残高の取得に失敗しました:", error);
-            }
-        };
-
-        fetchBalance();
-    }, [currentUserId]);
-
+export default function Top({ onButtonClick, userId, balance }) {
     return (
         <>
             <div className={styles.mainInfo}>

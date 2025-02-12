@@ -1,18 +1,9 @@
-import Title from "../components/Title";
-import { getCurrentUserId } from "../lib/auth";
 import { upsertBalance } from "../lib/payment";
 import { useState } from "react";
-
 import styles from '@/styles/Payment.module.css';
 
-export default function Payment({ onButtonClick }) {
-    const [currentUserId, setCurrentUserId] = useState(null);
+export default function Payment({ onButtonClick, userId, balance }) {
     const [deposit, setdeposit] = useState("0");
-
-    // ユーザーIDを取得
-    getCurrentUserId().then((userId) => {
-        setCurrentUserId(userId);
-    });
 
     const handleDepositChange = (event) => {
         const value = event.target.value;
@@ -21,14 +12,14 @@ export default function Payment({ onButtonClick }) {
         }
     };
 
-    const handleFormSubmit = (event) => {
-        upsertBalance(event, currentUserId, deposit);
+    const handleFormSubmit = () => {
+        upsertBalance(userId, deposit);
         onButtonClick(deposit);
     };
 
     return (
         <>
-            <form onSubmit={handleFormSubmit}>
+            <form onSubmit={(event) => { event.preventDefault(); handleFormSubmit(); }}>
                 <label className={styles.label}>
                     入金金額
                     <input
