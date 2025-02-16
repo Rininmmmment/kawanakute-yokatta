@@ -1,9 +1,16 @@
+# API仕様
+/odds/{raceid}
+-> 1-3着情報
+
+/payments/{raceid}
+-> 払い戻し情報
+
 # Flask API
 ## 開発サーバーを立てて動かす
 1. Python仮想環境を作成します。
 ```
-python3 -m venv 仮想環境名
-source 仮想環境名/bin/activate
+python3 -m venv myvenv
+source myvenv/bin/activate
 ```
 
 2. 動かす
