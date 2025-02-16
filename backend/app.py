@@ -5,7 +5,7 @@ from flask_cors import CORS
 from bs4 import BeautifulSoup
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000", "https://graph-view-nq4y.vercel.app"])
+CORS(app, origins=["http://localhost:3000", "https://kawanakute-yokatta.vercel.app"])
 
 # オッズと馬番号を取得
 def scrape_odds_and_horse_number(url):
