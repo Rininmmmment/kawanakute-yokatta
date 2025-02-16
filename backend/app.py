@@ -78,6 +78,10 @@ def scrape_payouts(url):
 
     return payout_data
 
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
 @app.route('/odds/<race_id>', methods=['GET'])
 def scrape_odds_endpoint(race_id):
     url = f"https://race.sp.netkeiba.com/?pid=race_result&race_id={race_id}"
