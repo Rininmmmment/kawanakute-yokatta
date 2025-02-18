@@ -123,7 +123,7 @@ def scrape_odds_endpoint(race_id):
 @app.route('/payouts/<race_id>/<bet_type>', methods=['GET'])
 def scrape_payouts_endpoint(race_id, bet_type):
     url = f"https://race.sp.netkeiba.com/?pid=race_result&race_id={race_id}"
-    data = scrape_payouts(url, urllib.parse.quote(bet_type))  # bet_typeが指定された場合にフィルタリング
+    data = scrape_payouts(url, bet_type)  # bet_typeが指定された場合にフィルタリング
     print(urllib.parse.quote(bet_type))
     return Response(json.dumps(data, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
