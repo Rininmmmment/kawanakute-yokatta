@@ -45,7 +45,7 @@ def scrape_odds_and_horse_number(url):
     return results
 
 
-def scrape_payouts(url, bet_type):
+def scrape_payouts(url):
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.get(url, headers=headers)
 
@@ -66,19 +66,18 @@ def scrape_payouts(url, bet_type):
 
     for row in rows:
         bet_type_from_row = row.find("th").text.strip() # ベットタイプの取得
-        if bet_type and bet_type_from_row != bet_type:
-            continue  # 引数で指定したベットタイプがあれば、それに対応するデータだけを取得
+        # if bet_type and bet_type_from_row != bet_type:
+        #     continue  # 引数で指定したベットタイプがあれば、それに対応するデータだけを取得
 
         numbers = [span.text.strip() for span in row.find("td", class_="Result").find_all("span") if span.text.strip()]
         payout = [span.text.strip() for span in row.find("td", class_="Payout").find_all("span") if span.text.strip()][0]
 
-        if bet_type_from_row == urllib.parse.quote('単勝'):
+        if bet_type_from_row == '単勝':
             payout_data[bet_type_from_row] = {
                 "horse": numbers[0],
                 "payout": payout.replace("円", "").replace(",", ""),
-                "a": bet_type
             }
-        elif bet_type_from_row == urllib.parse.quote('複勝'):
+        elif bet_type_from_row == '複勝':
             payouts = payout.replace(",", "").split("円")
             payout_data[bet_type_from_row] = []
             for i in range(3):
@@ -86,7 +85,7 @@ def scrape_payouts(url, bet_type):
                     "horse": numbers[i],
                     "payout": payouts[i],
                 })
-        elif bet_type_from_row == urllib.parse.quote('ワイド'):
+        elif bet_type_from_row == 'ワイド':
             horse_nums = [list(pair) for pair in zip(numbers[::2], numbers[1::2])]
             payouts = payout.replace(",", "").split("円")
             payout_data[bet_type_from_row] = []
@@ -119,12 +118,10 @@ def scrape_odds_endpoint(race_id):
     data = scrape_odds_and_horse_number(url)
     return Response(json.dumps(data, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
-# @app.route('/payouts/<race_id>', methods=['GET'])
-@app.route('/payouts/<race_id>/<bet_type>', methods=['GET'])
+@app.route('/payouts/<race_id>', methods=['GET'])
 def scrape_payouts_endpoint(race_id, bet_type):
     url = f"https://race.sp.netkeiba.com/?pid=race_result&race_id={race_id}"
-    data = scrape_payouts(url, bet_type)  # bet_typeが指定された場合にフィルタリング
-    print(urllib.parse.quote(bet_type))
+    data = scrape_payouts(url)  # bet_typeが指定された場合にフィルタリング
     return Response(json.dumps(data, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
 if __name__ == '__main__':
