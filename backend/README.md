@@ -25,5 +25,23 @@ pip freeze > requirements.txt
 ```
 
 2. 必要であればvercel.jsonを変更する
+```
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "app.py",
+            "use": "@vercel/python"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "app.py"
+        }
+    ]
+}
+```
+にしてみてね
 
 3. GitHubリモートリポジトリにpushし、vercelからデプロイ
