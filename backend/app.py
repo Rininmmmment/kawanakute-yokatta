@@ -65,7 +65,7 @@ def scrape_payouts(url, bet_type):
     rows = table.find_all("tr")
 
     for row in rows:
-        bet_type_from_row = row.find("th").text.strip()  # ベットタイプの取得
+        bet_type_from_row = urllib.parse.unquote(row.find("th").text.strip())  # ベットタイプの取得
         # if bet_type and bet_type_from_row != bet_type:
         #     continue  # 引数で指定したベットタイプがあれば、それに対応するデータだけを取得
 
