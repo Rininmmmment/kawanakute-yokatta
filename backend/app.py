@@ -44,7 +44,7 @@ def scrape_odds_and_horse_number(url):
     return results
 
 
-def scrape_payouts(url):
+def scrape_payouts(url, bet_type=None):
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.get(url, headers=headers)
 
@@ -64,40 +64,43 @@ def scrape_payouts(url):
     rows = table.find_all("tr")
 
     for row in rows:
-        bet_type = row.find("th").text.strip()
+        bet_type_from_row = row.find("th").text.strip()  # ベットタイプの取得
+        if bet_type and bet_type_from_row != bet_type:
+            continue  # 引数で指定したベットタイプがあれば、それに対応するデータだけを取得
+
         numbers = [span.text.strip() for span in row.find("td", class_="Result").find_all("span") if span.text.strip()]
         payout = [span.text.strip() for span in row.find("td", class_="Payout").find_all("span") if span.text.strip()][0]
 
-        if bet_type == '単勝':
-            payout_data[bet_type] = {
+        if bet_type_from_row == '単勝':
+            payout_data[bet_type_from_row] = {
                 "horse": numbers[0],
                 "payout": payout.replace("円", "").replace(",", ""),
             }
-        elif bet_type == '複勝':
+        elif bet_type_from_row == '複勝':
             payouts = payout.replace(",", "").split("円")
-            payout_data[bet_type] = []
+            payout_data[bet_type_from_row] = []
             for i in range(3):
-                payout_data[bet_type].append({
+                payout_data[bet_type_from_row].append({
                     "horse": numbers[i],
                     "payout": payouts[i],
                 })
-        elif bet_type == 'ワイド':
+        elif bet_type_from_row == 'ワイド':
             horse_nums = [list(pair) for pair in zip(numbers[::2], numbers[1::2])]
             payouts = payout.replace(",", "").split("円")
-            payout_data[bet_type] = []
+            payout_data[bet_type_from_row] = []
             for i in range(3):
-                payout_data[bet_type].append({
+                payout_data[bet_type_from_row].append({
                     "horse": horse_nums[i],
                     "payout": payouts[i],
                 })
-        elif bet_type == '3連複':
+        elif bet_type_from_row == '3連複':
             payouts = payout.replace(",", "").split("円")
-            payout_data[bet_type] = {
+            payout_data[bet_type_from_row] = {
                 "horse": numbers,
                 "payout": payout.replace("円", "").replace(",", ""),
             }
         else:
-            payout_data[bet_type] = {
+            payout_data[bet_type_from_row] = {
                 "horse": numbers,
                 "payout": payout,
             }
@@ -115,9 +118,10 @@ def scrape_odds_endpoint(race_id):
     return Response(json.dumps(data, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
 @app.route('/payouts/<race_id>', methods=['GET'])
-def scrape_payouts_endpoint(race_id):
+@app.route('/payouts/<race_id>/<bet_type>', methods=['GET'])
+def scrape_payouts_endpoint(race_id, bet_type=None):
     url = f"https://race.sp.netkeiba.com/?pid=race_result&race_id={race_id}"
-    data = scrape_payouts(url)
+    data = scrape_payouts(url, bet_type)  # bet_typeが指定された場合にフィルタリング
     return Response(json.dumps(data, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
 if __name__ == '__main__':
