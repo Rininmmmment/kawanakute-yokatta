@@ -65,43 +65,43 @@ def scrape_payouts(url):
     rows = table.find_all("tr")
 
     for row in rows:
-        bet_type_from_row = row.find("th").text.strip() # ベットタイプの取得
-        # if bet_type and bet_type_from_row != bet_type:
+        bet_type = row.find("th").text.strip() # ベットタイプの取得
+        # if bet_type and bet_type != bet_type:
         #     continue  # 引数で指定したベットタイプがあれば、それに対応するデータだけを取得
-
+        bet_type = row.find("th").text.strip()
         numbers = [span.text.strip() for span in row.find("td", class_="Result").find_all("span") if span.text.strip()]
         payout = [span.text.strip() for span in row.find("td", class_="Payout").find_all("span") if span.text.strip()][0]
 
-        if bet_type_from_row == '単勝':
-            payout_data[bet_type_from_row] = {
+        if bet_type == '単勝':
+            payout_data[bet_type] = {
                 "horse": numbers[0],
                 "payout": payout.replace("円", "").replace(",", ""),
             }
-        elif bet_type_from_row == '複勝':
+        elif bet_type == '複勝':
             payouts = payout.replace(",", "").split("円")
-            payout_data[bet_type_from_row] = []
+            payout_data[bet_type] = []
             for i in range(3):
-                payout_data[bet_type_from_row].append({
+                payout_data[bet_type].append({
                     "horse": numbers[i],
                     "payout": payouts[i],
                 })
-        elif bet_type_from_row == 'ワイド':
+        elif bet_type == 'ワイド':
             horse_nums = [list(pair) for pair in zip(numbers[::2], numbers[1::2])]
             payouts = payout.replace(",", "").split("円")
-            payout_data[bet_type_from_row] = []
+            payout_data[bet_type] = []
             for i in range(3):
-                payout_data[bet_type_from_row].append({
+                payout_data[bet_type].append({
                     "horse": horse_nums[i],
                     "payout": payouts[i],
                 })
-        elif bet_type_from_row == '3連複':
+        elif bet_type == '3連複':
             payouts = payout.replace(",", "").split("円")
-            payout_data[bet_type_from_row] = {
+            payout_data[bet_type] = {
                 "horse": numbers,
                 "payout": payout.replace("円", "").replace(",", ""),
             }
         else:
-            payout_data[bet_type_from_row] = {
+            payout_data[bet_type] = {
                 "horse": numbers,
                 "payout": payout,
             }
@@ -119,7 +119,7 @@ def scrape_odds_endpoint(race_id):
     return Response(json.dumps(data, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
 @app.route('/payouts/<race_id>', methods=['GET'])
-def scrape_payouts_endpoint(race_id, bet_type):
+def scrape_payouts_endpoint(race_id):
     url = f"https://race.sp.netkeiba.com/?pid=race_result&race_id={race_id}"
     data = scrape_payouts(url)  # bet_typeが指定された場合にフィルタリング
     return Response(json.dumps(data, ensure_ascii=False), content_type="application/json; charset=utf-8")
