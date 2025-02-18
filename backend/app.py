@@ -44,7 +44,7 @@ def scrape_odds_and_horse_number(url):
     return results
 
 
-def scrape_payouts(url, bet_type=None):
+def scrape_payouts(url, bet_type):
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.get(url, headers=headers)
 
@@ -117,9 +117,9 @@ def scrape_odds_endpoint(race_id):
     data = scrape_odds_and_horse_number(url)
     return Response(json.dumps(data, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
-@app.route('/payouts/<race_id>', methods=['GET'])
+# @app.route('/payouts/<race_id>', methods=['GET'])
 @app.route('/payouts/<race_id>/<bet_type>', methods=['GET'])
-def scrape_payouts_endpoint(race_id, bet_type=None):
+def scrape_payouts_endpoint(race_id, bet_type):
     url = f"https://race.sp.netkeiba.com/?pid=race_result&race_id={race_id}"
     data = scrape_payouts(url, bet_type)  # bet_typeが指定された場合にフィルタリング
     return Response(json.dumps(data, ensure_ascii=False), content_type="application/json; charset=utf-8")
