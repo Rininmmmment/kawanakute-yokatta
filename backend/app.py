@@ -3,6 +3,7 @@ import json
 import requests
 from flask_cors import CORS
 from bs4 import BeautifulSoup
+import urllib.parse
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000", "https://kawanakute-yokatta.vercel.app"])
@@ -75,6 +76,7 @@ def scrape_payouts(url, bet_type):
             payout_data[bet_type_from_row] = {
                 "horse": numbers[0],
                 "payout": payout.replace("円", "").replace(",", ""),
+                "a": bet_type
             }
         elif bet_type_from_row == '複勝':
             payouts = payout.replace(",", "").split("円")
@@ -121,7 +123,8 @@ def scrape_odds_endpoint(race_id):
 @app.route('/payouts/<race_id>/<bet_type>', methods=['GET'])
 def scrape_payouts_endpoint(race_id, bet_type):
     url = f"https://race.sp.netkeiba.com/?pid=race_result&race_id={race_id}"
-    data = scrape_payouts(url, bet_type)  # bet_typeが指定された場合にフィルタリング
+    data = scrape_payouts(url, urllib.parse.quote(bet_type))  # bet_typeが指定された場合にフィルタリング
+    print(urllib.parse.quote(bet_type))
     return Response(json.dumps(data, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
 if __name__ == '__main__':
