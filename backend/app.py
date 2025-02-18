@@ -65,20 +65,20 @@ def scrape_payouts(url, bet_type):
     rows = table.find_all("tr")
 
     for row in rows:
-        bet_type_from_row = urllib.parse.unquote(row.find("th").text.strip())  # ベットタイプの取得
+        bet_type_from_row = row.find("th").text.strip() # ベットタイプの取得
         # if bet_type and bet_type_from_row != bet_type:
         #     continue  # 引数で指定したベットタイプがあれば、それに対応するデータだけを取得
 
         numbers = [span.text.strip() for span in row.find("td", class_="Result").find_all("span") if span.text.strip()]
         payout = [span.text.strip() for span in row.find("td", class_="Payout").find_all("span") if span.text.strip()][0]
 
-        if bet_type_from_row == '単勝':
+        if bet_type_from_row == urllib.parse.quote('単勝'):
             payout_data[bet_type_from_row] = {
                 "horse": numbers[0],
                 "payout": payout.replace("円", "").replace(",", ""),
                 "a": bet_type
             }
-        elif bet_type_from_row == '複勝':
+        elif bet_type_from_row == urllib.parse.quote('複勝'):
             payouts = payout.replace(",", "").split("円")
             payout_data[bet_type_from_row] = []
             for i in range(3):
