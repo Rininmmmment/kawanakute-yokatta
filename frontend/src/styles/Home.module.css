@@ -21,6 +21,11 @@
     margin: 30px;
 }
 
+.menuBtn:hover {
+    background: #eee;
+    cursor: pointer;
+}
+
 .menuBtn {
     border: 1px solid;
     border-radius: 8px;

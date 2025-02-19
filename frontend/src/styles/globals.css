@@ -40,12 +40,21 @@ a {
 }
 
 button {
-  background-color: #ffffff;
   border: none;
+  background: none;
+}
+
+button:hover {
+  cursor: pointer;
 }
 
 .top-btn {
   padding: 4px 10px;
+}
+
+li:hover {
+  background: #eee;
+  cursor: pointer;
 }
 
 @media (prefers-color-scheme: dark) {

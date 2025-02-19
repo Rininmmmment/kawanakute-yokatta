@@ -50,7 +50,7 @@
 }
 
 .voteSetInput input {
-    width: 70px;
+    width: 100px;
     padding: 8px;
     text-align: right;
     border-radius: 5px;
@@ -63,7 +63,7 @@
 }
 
 .voteSetInputId input {
-    width: 40px;
+    width: 80px;
     padding: 8px;
     text-align: right;
     border-radius: 5px;

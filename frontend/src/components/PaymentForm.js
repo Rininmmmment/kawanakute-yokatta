@@ -20,18 +20,21 @@ export default function Payment({ onButtonClick, userId, balance }) {
 
     return (
         <>
-            <form onSubmit={(event) => { event.preventDefault(); handleFormSubmit(); }}>
+            <form onSubmit={(event) => { event.preventDefault(); handleFormSubmit(); }} className={styles.form}>
                 <label className={styles.label}>
                     入金金額
-                    <input
-                        type="text"
-                        value={deposit}
-                        onChange={handleDepositChange} />円
+                    <span>
+                        <input
+                            type="text"
+                            value={deposit}
+                            onChange={handleDepositChange} /> 円
+                    </span>
                 </label>
-                <button
-                    type="submit"
-                    className={styles.btn}
-                > 確認</button>
+                <div className={styles.btn}>
+                    <button
+                        type="submit"
+                    > 確認</button>
+                </div>
             </form >
         </>
     );

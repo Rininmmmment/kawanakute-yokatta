@@ -2,17 +2,32 @@
     display: flex;
     width: 90%;
     margin: 0 5%;
-    padding-bottom: 20px;
+    padding: 0 50px 30px;
     gap: 10px;
+    align-items: center;
+    justify-content: space-between
+}
+
+.label input {
+    padding: 8px;
+    text-align: right;
+    width: 180px;
 }
 
 .btn {
-    background-color: #4a90d1;
+    text-align: center;
+}
+
+.btn button {
     width: 90%;
+    border: 1px solid #171717;
+    border-radius: 5px;
+    background-color: rgb(131, 156, 220);
+    padding: 10px 30px 10px 30px;
     color: #fff;
-    border-radius: 8px;
-    margin: 0 5%;
-    padding: 5px;
-    border: 1px solid black;
-    font-size: 20px;
+    font-size: 18px;
+}
+
+.btn button:hover {
+    background-color: rgb(160, 177, 220);
 }
