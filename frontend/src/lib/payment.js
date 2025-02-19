@@ -44,7 +44,7 @@ export const getReturn = async (userId) => {
         if (docSnap.exists()) {
             const balance = await getBalance(userId);
             if (docSnap.data().total != 0) {
-                return (balance) / docSnap.data().total * 100;  // 取得したデータを返す
+                return Math.floor((balance) / docSnap.data().total * 100);  // 取得したデータを返す
             } else {
                 return 0;
             }
