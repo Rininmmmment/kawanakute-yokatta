@@ -2,7 +2,7 @@ import { collection, addDoc, Timestamp, query, where, getDocs, } from "firebase/
 import { db } from "../../firebaseConfig";
 
 // 馬券を購入する
-export const insertTicket = async (userId, racetrack, racenum, tickettype, buytype, horse, price) => {
+export const insertTicket = async (userId, racetrack, racenum, tickettype, buytype, horse, price, raceid) => {
     try {
         // 当日分のみ購入可能
         const date = new Date();
@@ -16,7 +16,9 @@ export const insertTicket = async (userId, racetrack, racenum, tickettype, buyty
             tickettype: tickettype,
             buytype: buytype,
             horse: horse,
-            price: price
+            price: price,
+            raceid: raceid,
+            payouts: null
         });
 
         console.log("チケットが追加されました。ID:", docRef.id);

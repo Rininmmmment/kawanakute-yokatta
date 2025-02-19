@@ -1,4 +1,4 @@
-import { upsertBalance } from "../lib/payment";
+import { upsertBalance, upsertTotal } from "../lib/payment";
 import { useState } from "react";
 import styles from '@/styles/Payment.module.css';
 
@@ -14,6 +14,7 @@ export default function Payment({ onButtonClick, userId, balance }) {
 
     const handleFormSubmit = () => {
         upsertBalance(userId, deposit);
+        upsertTotal(userId, deposit);
         onButtonClick(deposit);
     };
 

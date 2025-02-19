@@ -1,12 +1,19 @@
 import Title from "../components/Title";
 import { getTodayTickets } from "../lib/vote";
+import { getResults, updateResults, getTicketsWithoutResults } from "../lib/results";
+import { upsertBalance } from "../lib/payment";
 import { useState, useEffect } from "react";
-import Constants from '../constants/constants';  // パスはファイルの場所に応じて調整してください
+import Constants from '../constants/constants';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
+import styles from '@/styles/Inquiry.module.css';
+
 
 
 export default function Inquiry({ userId, balance }) {
     const [display, setDisplay] = useState("menu");
     const [tickets, settickets] = useState([]);
+    const [isDisable, setIsDisable] = useState(false);
 
     const handleMenuClick = (event) => {
         const clickedItemValue = event.target.dataset.value;
@@ -14,17 +21,34 @@ export default function Inquiry({ userId, balance }) {
         console.log(display);
     };
 
+    // 結果を取得して、馬券情報に払い戻しの項目を追加する
+    const fetchResults = async () => {
+        setIsDisable(true);
+
+        // 結果未更新馬券データ取得
+        const data = await getTicketsWithoutResults(userId);
+
+        // それぞれ結果取得し更新
+        for (let i = 0; i < data.length; i++) {
+            const result = await getResults(data[i].raceid);
+            console.log(result[data[i].tickettype]);
+            const payouts = await updateResults(data[i], result[data[i].tickettype]);
+            upsertBalance(userId, payouts);
+        };
+        setIsDisable(false);
+    };
+
+    // 投票内容照会(当日分)のデータ取得
     useEffect(() => {
-        const fetchUserIdAndBalance = async () => {
+        const fetchTicketsData = async () => {
             try {
                 const data = await getTodayTickets(userId);
                 settickets(data);
-                console.log(data);
             } catch (error) {
-                console.error("ユーザーIDまたは残高の取得に失敗しました:", error);
+                console.error("当日分馬券情報の取得に失敗しました:", error);
             }
         }
-        fetchUserIdAndBalance();
+        fetchTicketsData();
     }, []);
 
     return (
@@ -32,23 +56,28 @@ export default function Inquiry({ userId, balance }) {
             {display === "menu" &&
                 <>
                     <Title title="照会" />
-                    <ul>
-                        <li onClick={handleMenuClick} data-value="all">投票内容照会</li>
+                    <ul className={styles.menu}>
+                        <li onClick={handleMenuClick} data-value="all">投票内容照会(当日分)</li>
+                        <div className={styles.menuBtn}>
+                            <button onClick={fetchResults} data-value="get-results" disabled={isDisable}>{isDisable ? "更新中..." : "結果更新(当日分)"}</button>
+                        </div>
                     </ul>
                 </>
             }
             {display === "all" &&
                 <>
-                    <Title title="投票内容照会" />
+                    <Title title="投票内容照会(当日分)" />
                     <ul>
+                        <li className={styles.ticketItemUl}>投票内容</li>
                         {tickets.map((ticket, index) => (
-                            <li key={index}>
-                                <h3>{ticket.racetrack}</h3>
-                                <p>{ticket.racenum}R</p>
-                                <p>{Constants.get("TICKET_TYPES").get(ticket.tickettype)}</p>
+                            <li key={index} className={styles.ticketItem}>
+                                <p>({index + 1})</p>
+                                <p>{ticket.racetrack} {ticket.racenum}R</p>
                                 <p>{ticket.horse}</p>
-                                <p>{ticket.buytype}</p>
-                                <p>{ticket.price}円</p>
+                                <p>{ticket.payouts !== 0 && <span className={styles.ticketItemWin}>的中</span>}</p>
+                                <p>{ticket.tickettype} {ticket.buytype}</p>
+                                <p>購入: {ticket.price}円</p>
+                                <p className={styles.ticketItemPayout}><span>払戻: </span>{ticket.payouts}円</p>
                             </li>
                         ))}
                     </ul>

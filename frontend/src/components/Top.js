@@ -5,12 +5,12 @@ import horsePic from "/public/images/horse.svg";
 import analyzePic from "/public/images/analyze.svg";
 import settingPic from "/public/images/setting.svg";
 
-export default function Top({ onButtonClick, userId, balance }) {
+export default function Top({ onButtonClick, userId, balance, total, returnRate }) {
     return (
         <>
             <div className={styles.mainInfo}>
-                <h2>回収 __ %</h2>
-                <h2>収支 __ 円</h2>
+                <h2>回収 {returnRate} %</h2>
+                <h2>収支 {total} 円</h2>
                 <h3>購入限度 {balance} 円</h3>
             </div>
             <div>

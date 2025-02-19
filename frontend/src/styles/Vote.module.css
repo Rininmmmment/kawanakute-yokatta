@@ -18,3 +18,73 @@
     border-top: 1px solid;
     /* 最初のアイテムには上部ボーダーを付けない */
 }
+
+.voteSetTable {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.voteSetTable tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid;
+}
+
+.voteSetTable tr:first-child {
+    border-top: 1px solid;
+}
+
+.voteSetTable td {
+    padding: 10px 40px 10px 30px;
+}
+
+.voteSetTable td:nth-child(2) {
+    text-align: right;
+    color: rgb(80, 108, 180);
+}
+
+.voteSetInput {
+    text-align: right;
+    padding: 10px 30px 10px 30px;
+    border-bottom: 1px solid;
+}
+
+.voteSetInput input {
+    width: 70px;
+    padding: 8px;
+    text-align: right;
+    border-radius: 5px;
+}
+
+.voteSetInputId {
+    text-align: right;
+    padding: 10px 30px 10px 30px;
+    border-bottom: 1px solid;
+}
+
+.voteSetInputId input {
+    width: 40px;
+    padding: 8px;
+    text-align: right;
+    border-radius: 5px;
+}
+
+.voteSetInputBtn {
+    text-align: center;
+    padding: 20px 30px 10px 30px;
+}
+
+.voteSetInputBtn button {
+    width: 90%;
+    border: 1px solid #171717;
+    border-radius: 5px;
+    background-color: rgb(131, 156, 220);
+    padding: 10px 30px 10px 30px;
+    color: #fff;
+    font-size: 18px;
+}
+
+.voteSetInputBtn button:hover {
+    cursor: pointer;
+    background-color: rgb(160, 177, 220);
+}
