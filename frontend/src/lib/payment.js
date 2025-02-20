@@ -8,7 +8,6 @@ export const getBalance = async (userId) => {
 
         if (docSnap.exists()) {
             // ドキュメントが存在する場合、データを返す
-            console.log("残金データ:", docSnap.data().balance);
             return docSnap.data().balance;  // 取得したデータを返す
         } else {
             console.log("指定されたユーザーのドキュメントは存在しません");
@@ -26,7 +25,6 @@ export const getTotal = async (userId) => {
         if (docSnap.exists()) {
             // ドキュメントが存在する場合、データを返す
             const balance = await getBalance(userId);
-            console.log("収支データ:", docSnap.data().total);
             return balance - docSnap.data().total;  // 取得したデータを返す
         } else {
             console.log("指定されたユーザーのドキュメントは存在しません");
@@ -65,8 +63,6 @@ export const upsertBalance = async (userId, balance) => {
         await setDoc(userDocRef, {
             balance: parseInt(balance, 10) + parseInt(balanceData, 10),
         }, { merge: true });
-
-        console.log("残金項目がアップサートされました");
     } catch (error) {
         console.error("アップサート中にエラーが発生しました:", error);
     }

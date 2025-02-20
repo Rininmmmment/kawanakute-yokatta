@@ -1,4 +1,3 @@
-// components/Auth.js
 import { useState, useEffect } from "react";
 import { signInWithGoogle, logout } from "../lib/auth";
 import { auth } from "../../firebaseConfig";

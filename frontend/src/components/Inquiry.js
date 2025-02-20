@@ -3,9 +3,6 @@ import { getTodayTickets } from "../lib/vote";
 import { getResults, updateResults, getTicketsWithoutResults } from "../lib/results";
 import { upsertBalance } from "../lib/payment";
 import { useState, useEffect } from "react";
-import Constants from '../constants/constants';
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
 import styles from '@/styles/Inquiry.module.css';
 
 
@@ -18,7 +15,6 @@ export default function Inquiry({ userId, balance }) {
     const handleMenuClick = (event) => {
         const clickedItemValue = event.target.dataset.value;
         setDisplay(clickedItemValue);
-        console.log(display);
     };
 
     // 結果を取得して、馬券情報に払い戻しの項目を追加する
@@ -31,7 +27,6 @@ export default function Inquiry({ userId, balance }) {
         // それぞれ結果取得し更新
         for (let i = 0; i < data.length; i++) {
             const result = await getResults(data[i].raceid);
-            console.log(result[data[i].tickettype]);
             const payouts = await updateResults(data[i], result[data[i].tickettype]);
             upsertBalance(userId, payouts);
         };
@@ -70,6 +65,7 @@ export default function Inquiry({ userId, balance }) {
                     <ul>
                         <li className={styles.ticketItemUl}>投票内容</li>
                         {tickets.map((ticket, index) => (
+
                             <li key={index} className={styles.ticketItem}>
                                 <p>({index + 1})</p>
                                 <p>{ticket.racetrack} {ticket.racenum}R</p>

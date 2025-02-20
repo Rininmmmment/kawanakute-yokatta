@@ -32,7 +32,6 @@ export const updateResults = async (data, result) => {
         if (data.tickettype == '単勝') {
             if (data.horse == result.horse) {
                 payouts = data.price * parseInt(result.payout, 10) / 100;
-                console.log(data.id, data.price, result.payout, payouts);
             }
         }
 
@@ -41,9 +40,6 @@ export const updateResults = async (data, result) => {
         await setDoc(updTarget, {
             payouts: payouts,
         }, { merge: true });
-
-        console.log("払戻金がアップサートされました" + data.id);
-
         return payouts;
     } catch (error) {
         console.error("払戻金アップサート中にエラーが発生しました:", error);
@@ -64,7 +60,7 @@ export const getResults = async (raceid, tickettype) => {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('エラー:', error);
+        // console.error('エラー:', error);
         throw error;
     }
 }

@@ -1,4 +1,4 @@
-import { collection, addDoc, Timestamp, query, where, getDocs, } from "firebase/firestore";
+import { collection, addDoc, Timestamp, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
 // 馬券を購入する
@@ -6,7 +6,6 @@ export const insertTicket = async (userId, racetrack, racenum, tickettype, buyty
     try {
         // 当日分のみ購入可能
         const date = new Date();
-        date.setHours(0, 0, 0, 0);
 
         const docRef = await addDoc(collection(db, "tickets"), {
             userId: userId,
@@ -20,8 +19,6 @@ export const insertTicket = async (userId, racetrack, racenum, tickettype, buyty
             raceid: raceid,
             payouts: null
         });
-
-        console.log("チケットが追加されました。ID:", docRef.id);
     } catch (error) {
         console.error("チケット追加中にエラーが発生しました:", error);
     }
@@ -37,7 +34,8 @@ export const getTodayTickets = async (userId) => {
     const q = query(
         racesRef,
         where("racedate", "==", Timestamp.fromDate(today)),
-        where("userId", "==", userId)
+        where("userId", "==", userId),
+        // orderBy("racedate", "desc") // 日付の新しい順に並べる
     );
 
     try {
@@ -46,6 +44,7 @@ export const getTodayTickets = async (userId) => {
         querySnapshot.forEach((doc) => {
             tickets.push({ id: doc.id, ...doc.data() });
         });
+        console.log(tickets);
         return tickets;
     } catch (error) {
         console.error("レース情報の取得に失敗しました:", error);

@@ -39,7 +39,6 @@ export default function Vote({ userId, balance }) {
 
     // セットクリック時（=購入時）
     const handleBtnClick = async () => {
-        console.log(balance);
         if (balance >= price) {
             setErrorMsg("");
             try {
@@ -49,7 +48,6 @@ export default function Vote({ userId, balance }) {
                 setIsDisable(false);  // 連打防止
                 setDisplay(display + 1);
             } catch (error) {
-                console.error("挿入に失敗しました:", error);
                 setErrorMsg("処理に失敗しました");
             }
         }
@@ -82,10 +80,8 @@ export default function Vote({ userId, balance }) {
 
     // 方式
     const handleBuyTypeClick = (event) => {
-        console.log(display, buyType);
         const clickedItemValue = event.target.dataset.value;
         setBuyType(clickedItemValue);
-        console.log(display, buyType);
     };
 
     // 単勝/複勝馬
@@ -110,7 +106,6 @@ export default function Vote({ userId, balance }) {
         }
 
         setSelectedHorses(selectedArray.join(",")); // カンマ区切りの文字列に変換
-        console.log(selectedHorses);
     };
 
     // ワイド:ながし
