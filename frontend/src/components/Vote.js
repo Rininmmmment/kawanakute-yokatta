@@ -19,6 +19,7 @@ export default function Vote({ userId, balance }) {
     const [isDisable, setIsDisable] = useState(false);
     const year = new Date().getFullYear();  // レースid用年
     const [trackcode, setTrackcode] = useState("");  // レースid用競馬場コード
+    const [formationDisplay, setFormationDisplay] = useState(0);  // レースid用競馬場コード
 
     // 購入金額入力取得
     const handlePriceChange = (event) => {
@@ -129,6 +130,10 @@ export default function Vote({ userId, balance }) {
                     <button onClick={handleBack} className="top-btn">＜ 戻る</button>
                 </div>
             }
+
+            {/* 
+                --------------------------------- 競馬場選択 ---------------------------------
+            */}
             {display === 0 &&
                 <>
                     <Title title="競馬場" />
@@ -146,6 +151,10 @@ export default function Vote({ userId, balance }) {
                     </ul>
                 </>
             }
+
+            {/* 
+                --------------------------------- レース選択 ---------------------------------
+            */}
             {display === 1 &&
                 <>
                     <Title title="レース" />
@@ -156,6 +165,10 @@ export default function Vote({ userId, balance }) {
                     </ul>
                 </>
             }
+
+            {/* 
+                --------------------------------- 式別選択 ---------------------------------
+            */}
             {display === 2 &&
                 <>
                     <Title title="式別" />
@@ -171,7 +184,42 @@ export default function Vote({ userId, balance }) {
                 </>
             }
 
-            {/* 単/複勝の場合馬選択 */}
+            {/* 
+                --------------------------------- 方式選択 ---------------------------------
+            */}
+
+            {/* -------- ワイド -------- */}
+            {display === 3 && (ticketType === "ワイド") && (buyType === null) &&
+                <>
+                    <Title title="方式" />
+                    <ul className={styles.voteListContainer}>
+                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="通常">通常</li>
+                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="ながし">ながし</li>
+                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="ボックス">ボックス</li>
+                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="フォーメーション">フォーメーション</li>
+                    </ul>
+                </>
+            }
+
+            {/* -------- 3連複 -------- */}
+            {display === 3 && (ticketType === "3連複") && (buyType === null) &&
+                <>
+                    <Title title="方式" />
+                    <ul className={styles.voteListContainer}>
+                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="通常">通常</li>
+                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="軸一頭ながし">軸一頭ながし</li>
+                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="軸二頭ながし">軸二頭ながし</li>
+                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="ボックス">ボックス</li>
+                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="フォーメーション">フォーメーション</li>
+                    </ul>
+                </>
+            }
+
+            {/* 
+                --------------------------------- 馬番選択 ---------------------------------
+            */}
+
+            {/* -------- 単勝 / 複勝 -------- */}
             {display === 3 && ((ticketType === "単勝") || (ticketType === "複勝")) &&
                 <>
                     <Title title={ticketType} />
@@ -183,18 +231,7 @@ export default function Vote({ userId, balance }) {
                 </>
             }
 
-            {/* ワイド */}
-            {display === 3 && (ticketType === "ワイド") && (buyType === null) &&
-                <>
-                    <Title title="方式" />
-                    <ul className={styles.voteListContainer}>
-                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="通常">通常</li>
-                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="ながし">ながし</li>
-                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="ボックス">ボックス</li>
-                        {/* <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="フォーメーション">フォーメーション</li> */}
-                    </ul>
-                </>
-            }
+            {/* -------- ワイド: 通常 -------- */}
             {display === 3 && (ticketType === "ワイド") && (buyType === "通常") &&
                 <>
                     <Title title={ticketType + ' ' + buyType} />
@@ -221,6 +258,8 @@ export default function Vote({ userId, balance }) {
                     </ul>
                 </>
             }
+
+            {/* -------- ワイド: ながし -------- */}
             {display === 3 && (ticketType === "ワイド") && (buyType === "ながし") && (horse == null) &&
                 <>
                     <Title title={ticketType + ' ' + buyType} />
@@ -258,6 +297,8 @@ export default function Vote({ userId, balance }) {
                     </ul>
                 </>
             }
+
+            {/* -------- ワイド: ボックス -------- */}
             {display === 3 && (ticketType === "ワイド") && (buyType === "ボックス") && (horse == null) &&
                 <>
                     <Title title={ticketType + ' ' + buyType} />
@@ -283,18 +324,60 @@ export default function Vote({ userId, balance }) {
                     </ul>
                 </>
             }
-            {display === 3 && (ticketType === "3連複") && (buyType === null) &&
+
+            {/* -------- ワイド: フォーメーション -------- */}
+            {display === 3 && (ticketType === "ワイド") && (buyType === "フォーメーション") && (horse == null) &&
                 <>
-                    <Title title="方式" />
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>1頭目を選択してください。</p>
                     <ul className={styles.voteListContainer}>
-                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="通常">通常</li>
-                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="軸一頭ながし">軸一頭ながし</li>
-                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="軸二頭ながし">軸二頭ながし</li>
-                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="ボックス">ボックス</li>
-                        {/* <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="フォーメーション">フォーメーション</li> */}
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorsesClick(number, 18)}  // 何頭でも可
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setHorse(selectedHorses); setSelectedHorses(""); }}>決定</button>
+                        </div>
                     </ul>
                 </>
             }
+            {display === 3 && (ticketType === "ワイド") && (buyType === "フォーメーション") && (horse != null) &&
+                <>
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>2頭目を選択してください。</p>
+                    <ul className={styles.voteListContainer}>
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorsesClick(number, 18)}  // 何頭でも可
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setDisplay(display + 1); setHorse(horse + ":" + selectedHorses); }}>決定</button>
+                        </div>
+                    </ul>
+                </>
+            }
+
+            {/* -------- 3連複: 通常 -------- */}
             {display === 3 && (ticketType === "3連複") && (buyType === "通常") && (horse == null) &&
                 <>
                     <Title title={ticketType + ' ' + buyType} />
@@ -320,6 +403,8 @@ export default function Vote({ userId, balance }) {
                     </ul>
                 </>
             }
+
+            {/* -------- 3連複: 軸一頭ながし -------- */}
             {display === 3 && (ticketType === "3連複") && (buyType === "軸一頭ながし") && (horse == null) &&
                 <>
                     <Title title={ticketType + ' ' + buyType} />
@@ -357,6 +442,8 @@ export default function Vote({ userId, balance }) {
                     </ul>
                 </>
             }
+
+            {/* -------- 3連複: 軸二頭ながし -------- */}
             {display === 3 && (ticketType === "3連複") && (buyType === "軸二頭ながし") && (horse == null) &&
                 <>
                     <Title title={ticketType + ' ' + buyType} />
@@ -409,6 +496,8 @@ export default function Vote({ userId, balance }) {
                     </ul>
                 </>
             }
+
+            {/* -------- 3連複: ボックス -------- */}
             {display === 3 && (ticketType === "3連複") && (buyType === "ボックス") && (horse == null) &&
                 <>
                     <Title title={ticketType + ' ' + buyType} />
@@ -434,7 +523,87 @@ export default function Vote({ userId, balance }) {
                     </ul>
                 </>
             }
-            {/* 確認画面 */}
+
+            {/* -------- 3連複: フォーメーション -------- */}
+            {display === 3 && (ticketType === "3連複") && (buyType === "フォーメーション") && (formationDisplay == 0) &&
+                <>
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>1頭目を選択してください。</p>
+                    <ul className={styles.voteListContainer}>
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorsesClick(number, 18)}  // 何頭でも可
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setHorse(selectedHorses); setSelectedHorses(""); setFormationDisplay(formationDisplay + 1); }}>決定</button>
+                        </div>
+                    </ul>
+                </>
+            }
+            {display === 3 && (ticketType === "3連複") && (buyType === "フォーメーション") && (formationDisplay == 1) &&
+                <>
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>2頭目を選択してください。</p>
+                    <ul className={styles.voteListContainer}>
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorsesClick(number, 18)}  // 何頭でも可
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setHorse(horse + ":" + selectedHorses); setSelectedHorses(""); setFormationDisplay(formationDisplay + 1); }}>決定</button>
+                        </div>
+                    </ul>
+                </>
+            }
+            {display === 3 && (ticketType === "3連複") && (buyType === "フォーメーション") && (formationDisplay == 2) &&
+                <>
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>3頭目を選択してください。</p>
+                    <ul className={styles.voteListContainer}>
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorsesClick(number, 18)}  // 何頭でも可
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setDisplay(display + 1); setHorse(horse + ":" + selectedHorses); setFormationDisplay(formationDisplay + 1); }}>決定</button>
+                        </div>
+                    </ul>
+                </>
+            }
+
+            {/* 
+                --------------------------------- 確認画面 ---------------------------------
+            */}
             {
                 display === 4 &&
                 <>
@@ -482,7 +651,9 @@ export default function Vote({ userId, balance }) {
                 </>
             }
 
-            {/* 確認画面 */}
+            {/* 
+                --------------------------------- 完了画面 ---------------------------------
+            */}
             {
                 display === 5 &&
                 <>
