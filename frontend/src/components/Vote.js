@@ -13,6 +13,7 @@ export default function Vote({ userId, balance }) {
     const [ticketType, setTticketType] = useState(null);
     const [buyType, setBuyType] = useState(null);
     const [horse, setHorse] = useState(null);
+    const [selectedHorses, setSelectedHorses] = useState("");
     const [price, setPrice] = useState("");
     const [raceid, setRaceid] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
@@ -93,6 +94,22 @@ export default function Vote({ userId, balance }) {
         const clickedItemValue = event.target.dataset.value;
         setHorse(clickedItemValue);
         setDisplay(display + 1);
+    };
+
+    // ワイド
+    const handleHorseClickWide = (index) => {
+        let selectedArray = selectedHorses ? selectedHorses.split(",").map(Number) : [];
+
+        if (selectedArray.includes(index)) {
+            // すでに選択されていたら解除
+            selectedArray = selectedArray.filter((horse) => horse !== index);
+        } else if (selectedArray.length < 2) {
+            // まだ2つ未満なら追加
+            selectedArray.push(index);
+        }
+
+        setSelectedHorses(selectedArray.join(",")); // カンマ区切りの文字列に変換
+        console.log(selectedHorses);
     };
 
     const handleBack = () => {
@@ -177,10 +194,24 @@ export default function Vote({ userId, balance }) {
                     <Title title={ticketType} />
                     <p>馬番を2頭選択してください。</p>
                     <ul className={styles.voteListContainer}>
-                        {[...Array(18)].map((_, index) => (
-                            <li onClick={handleHorseClick} className={styles.voteListItem} data-value={index + 1}>{index + 1}</li>
-                        ))}
-                        <button>決定</button>
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorseClickWide(number)}
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setDisplay(display + 1); setHorse(selectedHorses); }}>決定</button>
+                        </div>
                     </ul>
                 </>
             }

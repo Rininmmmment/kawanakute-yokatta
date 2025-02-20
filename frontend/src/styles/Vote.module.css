@@ -5,6 +5,26 @@
     border-spacing: 0;
 }
 
+.voteListContainer div {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.voteListContainer button {
+    width: 90%;
+    border: 1px solid #171717;
+    border-radius: 5px;
+    background-color: rgb(131, 156, 220);
+    padding: 10px 30px 10px 30px;
+    color: #fff;
+    font-size: 18px;
+}
+
+.voteListContainer button:hover {
+    cursor: pointer;
+    background-color: rgb(160, 177, 220);
+}
+
 .voteListItem {
     border-bottom: 1px solid;
     padding: 10px 20px;
@@ -12,6 +32,14 @@
 
 .voteListItem:hover {
     cursor: pointer;
+}
+
+.selected {
+    background: #d2e2f7;
+}
+
+.selected:hover {
+    background: #d2e2f7;
 }
 
 .voteListItem:first-child {
