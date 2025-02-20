@@ -74,10 +74,10 @@ export default function Inquiry({ userId, balance }) {
                                 <p>({index + 1})</p>
                                 <p>{ticket.racetrack} {ticket.racenum}R</p>
                                 <p>{ticket.horse}</p>
-                                <p>{ticket.payouts !== 0 && <span className={styles.ticketItemWin}>的中</span>}</p>
+                                <p>{ticket.payouts !== 0 && ticket.payouts !== null && <span className={styles.ticketItemWin}>的中</span>}</p>
                                 <p>{ticket.tickettype} {ticket.buytype}</p>
                                 <p>購入: {ticket.price}円</p>
-                                <p className={styles.ticketItemPayout}><span>払戻: </span>{ticket.payouts}円</p>
+                                <p className={styles.ticketItemPayout}><span>払戻: </span>{ticket.payouts == null ? "未反映" : ticket.payouts + "円"}</p>
                             </li>
                         ))}
                     </ul>

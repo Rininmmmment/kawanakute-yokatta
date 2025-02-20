@@ -42,6 +42,11 @@
     background: #d2e2f7;
 }
 
+.disabled,
+.disabled:hover {
+    background: #ccc;
+}
+
 .voteListItem:first-child {
     border-top: 1px solid;
     /* 最初のアイテムには上部ボーダーを付けない */

@@ -12,32 +12,31 @@ import styles from '@/styles/Home.module.css';
 
 export default function Home() {
     const [currentUserId, setCurrentUserId] = useState(null);
-    const [displayTarget, setdisplayTarget] = useState("top");
+    const [displayTarget, setDisplayTarget] = useState("top");
+    const [componentKey, setComponentKey] = useState(0);
     const [balance, setBalance] = useState(null);
     const [total, setTotal] = useState(null);
     const [returnRate, setReturnRate] = useState(null);
 
     // 子コンポーネントからクリックされたボタンの情報を受け取る
     const handleButtonClick = (buttonName) => {
-        setdisplayTarget(buttonName);
+        setDisplayTarget(buttonName);
+        setComponentKey(prevKey => prevKey + 1);  // keyを変更して再マウント
     };
 
     // ユーザーID, 残金を取得
     useEffect(() => {
         const fetchUserIdAndBalance = async () => {
             try {
-                // まずユーザーIDを取得
                 const userId = await getCurrentUserId();
-                setCurrentUserId(userId); // userId を state に保存
-
-                // userId が取得できたら balance を取得
+                setCurrentUserId(userId);
                 if (userId) {
                     const balanceData = await getBalance(userId);
                     setBalance(balanceData);
                     const totalData = await getTotal(userId);
-                    setTotal((totalData));
+                    setTotal(totalData);
                     const returnRate = await getReturn(userId);
-                    setReturnRate((returnRate));
+                    setReturnRate(returnRate);
                 }
             } catch (error) {
                 console.error("ユーザーIDまたは残高の取得に失敗しました:", error);
@@ -61,13 +60,32 @@ export default function Home() {
                     </div>
                 </header>
                 <main>
-                    {displayTarget != "top" && <button className="top-btn" onClick={() => handleButtonClick("top")}>トップに戻る</button>}
-                    {displayTarget === "top" && <Top onButtonClick={handleButtonClick} userId={currentUserId} balance={balance} total={total} returnRate={returnRate} />}
-                    {displayTarget === "payment" && currentUserId && <Payment userId={currentUserId} balance={balance} />}
-                    {displayTarget === "vote" && <Vote userId={currentUserId} balance={balance} />}
-                    {displayTarget === "inquiry" && <Inquiry userId={currentUserId} balance={balance} />}
-                </main >
-            </div >
+                    {displayTarget !== "top" && (
+                        <button className="top-btn" onClick={() => handleButtonClick("top")}>
+                            トップに戻る
+                        </button>
+                    )}
+                    {displayTarget === "top" && (
+                        <Top
+                            key={componentKey}
+                            onButtonClick={handleButtonClick}
+                            userId={currentUserId}
+                            balance={balance}
+                            total={total}
+                            returnRate={returnRate}
+                        />
+                    )}
+                    {displayTarget === "payment" && currentUserId && (
+                        <Payment key={componentKey} userId={currentUserId} balance={balance} />
+                    )}
+                    {displayTarget === "vote" && (
+                        <Vote key={componentKey} userId={currentUserId} balance={balance} />
+                    )}
+                    {displayTarget === "inquiry" && (
+                        <Inquiry key={componentKey} userId={currentUserId} balance={balance} />
+                    )}
+                </main>
+            </div>
         </>
     );
 }

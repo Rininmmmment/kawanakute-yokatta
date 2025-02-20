@@ -1,10 +1,9 @@
 import Title from "../components/Title";
 import { insertTicket } from "../lib/vote";
 import { upsertBalance } from "../lib/payment";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styles from '@/styles/Vote.module.css';
 import Constants from '../constants/constants';
-
 
 export default function Vote({ userId, balance }) {
     const [display, setDisplay] = useState(0);
@@ -20,7 +19,6 @@ export default function Vote({ userId, balance }) {
     const [isDisable, setIsDisable] = useState(false);
     const year = new Date().getFullYear();  // レースid用年
     const [trackcode, setTrackcode] = useState("");  // レースid用競馬場コード
-
 
     // 購入金額入力取得
     const handlePriceChange = (event) => {
@@ -96,20 +94,28 @@ export default function Vote({ userId, balance }) {
         setDisplay(display + 1);
     };
 
-    // ワイド
-    const handleHorseClickWide = (index) => {
+    // ワイド/3連複で複数馬を選ぶ
+    // index: クリックした馬番
+    // maxHorseNum: 最大選択数(ワイド通常は2など)
+    const handleHorsesClick = (index, maxHorseNum) => {
         let selectedArray = selectedHorses ? selectedHorses.split(",").map(Number) : [];
 
         if (selectedArray.includes(index)) {
             // すでに選択されていたら解除
             selectedArray = selectedArray.filter((horse) => horse !== index);
-        } else if (selectedArray.length < 2) {
+        } else if (selectedArray.length < maxHorseNum) {
             // まだ2つ未満なら追加
             selectedArray.push(index);
         }
 
         setSelectedHorses(selectedArray.join(",")); // カンマ区切りの文字列に変換
         console.log(selectedHorses);
+    };
+
+    // ワイド:ながし
+    const handleHorseClickWideWheel = (event) => {
+        const clickedItemValue = event.target.dataset.value;
+        setHorse(clickedItemValue);
     };
 
     const handleBack = () => {
@@ -156,11 +162,11 @@ export default function Vote({ userId, balance }) {
                     <ul className={styles.voteListContainer}>
                         <li onClick={handleTicketTypeClick} className={styles.voteListItem} data-value="単勝">単勝</li>
                         <li onClick={handleTicketTypeClick} className={styles.voteListItem} data-value="複勝">複勝</li>
-                        <li onClick={handleTicketTypeClick} className={styles.voteListItem} data-value="馬連">馬連：後回し</li>
+                        {/* <li onClick={handleTicketTypeClick} className={styles.voteListItem} data-value="馬連">馬連：後回し</li> */}
                         <li onClick={handleTicketTypeClick} className={styles.voteListItem} data-value="ワイド">ワイド</li>
-                        <li onClick={handleTicketTypeClick} className={styles.voteListItem} data-value="馬単：後回し">馬単：後回し</li>
+                        {/* <li onClick={handleTicketTypeClick} className={styles.voteListItem} data-value="馬単：後回し">馬単：後回し</li> */}
                         <li onClick={handleTicketTypeClick} className={styles.voteListItem} data-value="3連複">3連複</li>
-                        <li onClick={handleTicketTypeClick} className={styles.voteListItem} data-value="3連単">3連単：後回し</li>
+                        {/* <li onClick={handleTicketTypeClick} className={styles.voteListItem} data-value="3連単">3連単：後回し</li> */}
                     </ul>
                 </>
             }
@@ -185,13 +191,13 @@ export default function Vote({ userId, balance }) {
                         <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="通常">通常</li>
                         <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="ながし">ながし</li>
                         <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="ボックス">ボックス</li>
-                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="フォーメーション">フォーメーション</li>
+                        {/* <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="フォーメーション">フォーメーション</li> */}
                     </ul>
                 </>
             }
             {display === 3 && (ticketType === "ワイド") && (buyType === "通常") &&
                 <>
-                    <Title title={ticketType} />
+                    <Title title={ticketType + ' ' + buyType} />
                     <p>馬番を2頭選択してください。</p>
                     <ul className={styles.voteListContainer}>
                         {[...Array(18)].map((_, index) => {
@@ -201,7 +207,7 @@ export default function Vote({ userId, balance }) {
                             return (
                                 <li
                                     key={index}
-                                    onClick={() => handleHorseClickWide(number)}
+                                    onClick={() => handleHorsesClick(number, 2)}
                                     className={`${styles.voteListItem} ${isSelected ? styles.selected : ""}`}
                                     data-value={number}
                                 >
@@ -215,19 +221,68 @@ export default function Vote({ userId, balance }) {
                     </ul>
                 </>
             }
-            {/* {display === 3 && (ticketType === "ワイド") && (buyType === "ながし") &&
+            {display === 3 && (ticketType === "ワイド") && (buyType === "ながし") && (horse == null) &&
                 <>
-                    <Title title={ticketType} />
+                    <Title title={ticketType + ' ' + buyType} />
                     <p>軸を1頭選択してください。</p>
                     <ul className={styles.voteListContainer}>
                         {[...Array(18)].map((_, index) => (
-                            <li onClick={handleHorseClick} className={styles.voteListItem} data-value={index + 1}>{index + 1}</li>
+                            <li onClick={handleHorseClickWideWheel} className={styles.voteListItem} data-value={index + 1}>{index + 1}</li>
                         ))}
                     </ul>
                 </>
-            } */}
-
-            {/* 三連複 */}
+            }
+            {display === 3 && (ticketType === "ワイド") && (buyType === "ながし") && (horse !== null) &&
+                <>
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>馬番を選択してください。</p>
+                    <ul className={styles.voteListContainer}>
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+                            const isMain = horse == (index + 1) ? true : false;  // 軸に選んだかどうか
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorsesClick(number, 17)}  // 何頭でも可
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""} ${isMain ? styles.disabled : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setDisplay(display + 1); setHorse(horse + ":" + selectedHorses); }}>決定</button>
+                        </div>
+                    </ul>
+                </>
+            }
+            {display === 3 && (ticketType === "ワイド") && (buyType === "ボックス") && (horse == null) &&
+                <>
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>1頭目を選択してください。</p>
+                    <ul className={styles.voteListContainer}>
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorsesClick(number, 18)}  // 何頭でも可
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setDisplay(display + 1); setHorse(selectedHorses); }}>決定</button>
+                        </div>
+                    </ul>
+                </>
+            }
             {display === 3 && (ticketType === "3連複") && (buyType === null) &&
                 <>
                     <Title title="方式" />
@@ -236,26 +291,152 @@ export default function Vote({ userId, balance }) {
                         <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="軸一頭ながし">軸一頭ながし</li>
                         <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="軸二頭ながし">軸二頭ながし</li>
                         <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="ボックス">ボックス</li>
-                        <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="フォーメーション">フォーメーション</li>
+                        {/* <li onClick={handleBuyTypeClick} className={styles.voteListItem} data-value="フォーメーション">フォーメーション</li> */}
                     </ul>
                 </>
             }
-
-            {display === 3 && (ticketType === "3連複") && (buyType === "通常") &&
+            {display === 3 && (ticketType === "3連複") && (buyType === "通常") && (horse == null) &&
                 <>
-                    <Title title={ticketType} />
-                    <p>馬番を3頭選択してください。</p>
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>馬番を選択してください。</p>
+                    <ul className={styles.voteListContainer}>
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorsesClick(number, 3)}
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setDisplay(display + 1); setHorse(selectedHorses); }}>決定</button>
+                        </div>
+                    </ul>
+                </>
+            }
+            {display === 3 && (ticketType === "3連複") && (buyType === "軸一頭ながし") && (horse == null) &&
+                <>
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>軸を1頭選択してください。</p>
                     <ul className={styles.voteListContainer}>
                         {[...Array(18)].map((_, index) => (
-                            <li onClick={handleHorseClick} className={styles.voteListItem} data-value={index + 1}>{index + 1}</li>
+                            <li onClick={handleHorseClickWideWheel} className={styles.voteListItem} data-value={index + 1}>{index + 1}</li>
                         ))}
-                        <button>決定</button>
                     </ul>
                 </>
             }
-
+            {display === 3 && (ticketType === "3連複") && (buyType === "軸一頭ながし") && (horse != null) &&
+                <>
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>馬番を選択してください。</p>
+                    <ul className={styles.voteListContainer}>
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+                            const isMain = horse == (index + 1) ? true : false;  // 軸に選んだかどうか
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorsesClick(number, 17)}  // 何頭でも可
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""} ${isMain ? styles.disabled : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setDisplay(display + 1); setHorse(horse + ":" + selectedHorses); }}>決定</button>
+                        </div>
+                    </ul>
+                </>
+            }
+            {display === 3 && (ticketType === "3連複") && (buyType === "軸二頭ながし") && (horse == null) &&
+                <>
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>馬番を2つ選択してください。</p>
+                    <ul className={styles.voteListContainer}>
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+                            const isMain = horse == (index + 1) ? true : false;  // 軸に選んだかどうか
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorsesClick(number, 2)}
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""} ${isMain ? styles.disabled : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setHorse(selectedHorses); setSelectedHorses("") }}>決定</button>
+                        </div>
+                    </ul>
+                </>
+            }
+            {display === 3 && (ticketType === "3連複") && (buyType === "軸二頭ながし") && (horse != null) &&
+                <>
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>馬番を選択してください。</p>
+                    <ul className={styles.voteListContainer}>
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+                            const isMain = horse.split(",").map(Number).includes(number);  // 軸に選んだかどうか
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorsesClick(number, 16)}
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""} ${isMain ? styles.disabled : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setDisplay(display + 1); setHorse(horse + ":" + selectedHorses); }}>決定</button>
+                        </div>
+                    </ul>
+                </>
+            }
+            {display === 3 && (ticketType === "3連複") && (buyType === "ボックス") && (horse == null) &&
+                <>
+                    <Title title={ticketType + ' ' + buyType} />
+                    <p>馬番を選択してください。</p>
+                    <ul className={styles.voteListContainer}>
+                        {[...Array(18)].map((_, index) => {
+                            const number = index + 1;
+                            const isSelected = selectedHorses.split(",").map(Number).includes(number);
+                            return (
+                                <li
+                                    key={index}
+                                    onClick={() => handleHorsesClick(number, 18)}  // 何頭でも可
+                                    className={`${styles.voteListItem} ${isSelected ? styles.selected : ""}`}
+                                    data-value={number}
+                                >
+                                    {number}
+                                </li>
+                            );
+                        })}
+                        <div>
+                            <button onClick={() => { setDisplay(display + 1); setHorse(selectedHorses); }}>決定</button>
+                        </div>
+                    </ul>
+                </>
+            }
             {/* 確認画面 */}
-            {display === 4 &&
+            {
+                display === 4 &&
                 <>
                     <Title title="金額入力" />
                     <table className={styles.voteSetTable}>
@@ -302,7 +483,8 @@ export default function Vote({ userId, balance }) {
             }
 
             {/* 確認画面 */}
-            {display === 5 &&
+            {
+                display === 5 &&
                 <>
                     <p>購入が完了しました</p>
                 </>
