@@ -5,8 +5,6 @@ import { upsertBalance } from "../lib/payment";
 import { useState, useEffect } from "react";
 import styles from '@/styles/Inquiry.module.css';
 
-
-
 export default function Inquiry({ userId, balance }) {
     const [display, setDisplay] = useState("menu");
     const [tickets, settickets] = useState([]);
@@ -28,7 +26,7 @@ export default function Inquiry({ userId, balance }) {
         for (let i = 0; i < data.length; i++) {
             const result = await getResults(data[i].raceid);
             const payouts = await updateResults(data[i], result[data[i].tickettype]);
-            upsertBalance(userId, payouts);
+            upsertBalance(userId, parseInt(payouts));
         };
         setIsDisable(false);
     };

@@ -27,10 +27,32 @@ export const getTicketsWithoutResults = async (userId) => {
 // 払戻金を返す
 export const updateResults = async (data, result) => {
     try {
-        // 払戻金計算
+        /**
+         * 払戻金計算
+         * nums: 投票した馬番[1,2]
+         * result[i].horse: 結果の馬番
+         */
         let payouts = 0;
         if (data.tickettype == '単勝') {
             if (data.horse == result.horse) {
+                payouts = data.price * parseInt(result.payout, 10) / 100;
+            }
+        } else if (data.tickettype == '複勝') {
+            for (let i = 0; i < result.length; i++) {
+                if (data.horse == result[i].horse) {
+                    payouts = data.price * parseInt(result[i].payout, 10) / 100;
+                }
+            }
+        } else if (data.tickettype == 'ワイド') {
+            const nums = data.horse.split(",");
+            for (let i = 0; i < result.length; i++) {
+                if (nums.every(h => result[i].horse.includes(h))) {
+                    payouts = data.price * parseInt(result[i].payout, 10) / 100;
+                }
+            }
+        } else if (data.tickettype == '3連複') {
+            const nums = data.horse.split(",");
+            if (nums.every(h => result.horse.includes(h))) {
                 payouts = data.price * parseInt(result.payout, 10) / 100;
             }
         }
@@ -47,7 +69,7 @@ export const updateResults = async (data, result) => {
 };
 
 // 払い戻し結果取得
-export const getResults = async (raceid, tickettype) => {
+export const getResults = async (raceid) => {
     const apiUrl = 'https://kawanakute-yokatta-api.vercel.app/payouts/' + raceid;
     try {
         // APIを呼び出す

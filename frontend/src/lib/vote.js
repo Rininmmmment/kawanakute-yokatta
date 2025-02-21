@@ -6,6 +6,7 @@ export const insertTicket = async (userId, racetrack, racenum, tickettype, buyty
     try {
         // 当日分のみ購入可能
         const date = new Date();
+        date.setHours(0, 0, 0, 0);
 
         const docRef = await addDoc(collection(db, "tickets"), {
             userId: userId,
@@ -44,7 +45,6 @@ export const getTodayTickets = async (userId) => {
         querySnapshot.forEach((doc) => {
             tickets.push({ id: doc.id, ...doc.data() });
         });
-        console.log(tickets);
         return tickets;
     } catch (error) {
         console.error("レース情報の取得に失敗しました:", error);
