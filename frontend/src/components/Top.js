@@ -9,9 +9,9 @@ export default function Top({ onButtonClick, userId, balance, total, returnRate 
     return (
         <>
             <div className={styles.mainInfo}>
-                <h2>回収 {returnRate} %</h2>
-                <h2>収支 {total} 円</h2>
-                <h3>購入限度 {balance} 円</h3>
+                <h2>回収 {returnRate == null ? "loading..." : returnRate.toLocaleString()} %</h2>
+                <h2>収支 {total == null ? "loading..." : total.toLocaleString()} 円</h2>
+                <h3>購入限度 {balance == null ? "loading..." : balance.toLocaleString()} 円</h3>
             </div>
             <div>
                 <div className={styles.menuContainer}>

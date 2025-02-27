@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { getBalance, getTotal, getReturn } from "../lib/payment";
+import { calcReturn, calcProfitLoss } from "../lib/payment";
 import { getCurrentUserId } from "../lib/auth";
+import { getMoney } from "../lib/moneyDao";
 
 import Head from "next/head";
 import Auth from "../components/Auth";
@@ -13,7 +14,6 @@ import styles from '@/styles/Home.module.css';
 export default function Home() {
     const [currentUserId, setCurrentUserId] = useState(null);
     const [displayTarget, setDisplayTarget] = useState("top");
-    const [componentKey, setComponentKey] = useState(0);
     const [balance, setBalance] = useState(null);
     const [total, setTotal] = useState(null);
     const [returnRate, setReturnRate] = useState(null);
@@ -21,7 +21,6 @@ export default function Home() {
     // 子コンポーネントからクリックされたボタンの情報を受け取る
     const handleButtonClick = (buttonName) => {
         setDisplayTarget(buttonName);
-        setComponentKey(prevKey => prevKey + 1);  // keyを変更して再マウント
     };
 
     // ユーザーID, 残金を取得
@@ -31,12 +30,10 @@ export default function Home() {
                 const userId = await getCurrentUserId();
                 setCurrentUserId(userId);
                 if (userId) {
-                    const balanceData = await getBalance(userId);
-                    setBalance(balanceData);
-                    const totalData = await getTotal(userId);
-                    setTotal(totalData);
-                    const returnRate = await getReturn(userId);
-                    setReturnRate(returnRate);
+                    const moneyData = await getMoney(userId);
+                    setBalance(moneyData.balance);
+                    setTotal(calcProfitLoss(moneyData.balance, moneyData.total));
+                    setReturnRate(calcReturn(moneyData.balance, moneyData.total));
                 }
             } catch (error) {
                 console.error("ユーザーIDまたは残高の取得に失敗しました:", error);
@@ -67,7 +64,6 @@ export default function Home() {
                     )}
                     {displayTarget === "top" && (
                         <Top
-                            key={componentKey}
                             onButtonClick={handleButtonClick}
                             userId={currentUserId}
                             balance={balance}
@@ -76,13 +72,13 @@ export default function Home() {
                         />
                     )}
                     {displayTarget === "payment" && currentUserId && (
-                        <Payment key={componentKey} userId={currentUserId} balance={balance} />
+                        <Payment userId={currentUserId} balance={balance} />
                     )}
                     {displayTarget === "vote" && (
-                        <Vote key={componentKey} userId={currentUserId} balance={balance} />
+                        <Vote userId={currentUserId} balance={balance} />
                     )}
                     {displayTarget === "inquiry" && (
-                        <Inquiry key={componentKey} userId={currentUserId} balance={balance} />
+                        <Inquiry userId={currentUserId} balance={balance} />
                     )}
                 </main>
             </div>
