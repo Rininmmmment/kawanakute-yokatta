@@ -1,5 +1,5 @@
-import { collection, addDoc, Timestamp, query, where, getDocs, orderBy } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
+import { Timestamp } from "firebase/firestore";
+import { ticketsDao } from "./ticketsDao";
 
 // 馬券を購入する
 export const insertTicket = async (userId, racetrack, racenum, tickettype, buytype, horse, price, raceid) => {
@@ -8,7 +8,7 @@ export const insertTicket = async (userId, racetrack, racenum, tickettype, buyty
         const date = new Date();
         date.setHours(0, 0, 0, 0);
 
-        const docRef = await addDoc(collection(db, "tickets"), {
+        const newTicket = {
             userId: userId,
             racetrack: racetrack,
             racedate: Timestamp.fromDate(date),
@@ -19,34 +19,20 @@ export const insertTicket = async (userId, racetrack, racenum, tickettype, buyty
             price: price,
             raceid: raceid,
             payouts: null
-        });
+        };
+
+        await ticketsDao.addTicket(newTicket);  // 新しいチケットを追加
     } catch (error) {
         console.error("チケット追加中にエラーが発生しました:", error);
     }
 };
 
+// 当日分のチケットを取得
 export const getTodayTickets = async (userId) => {
-    const racesRef = collection(db, "tickets");
-
-    // 今日の分のみ取得
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const q = query(
-        racesRef,
-        where("racedate", "==", Timestamp.fromDate(today)),
-        where("userId", "==", userId),
-        // orderBy("racedate", "desc") // 日付の新しい順に並べる
-    );
-
     try {
-        const querySnapshot = await getDocs(q);
-        const tickets = [];
-        querySnapshot.forEach((doc) => {
-            tickets.push({ id: doc.id, ...doc.data() });
-        });
+        const tickets = await ticketsDao.getTodayTickets(userId);
         return tickets;
     } catch (error) {
-        console.error("レース情報の取得に失敗しました:", error);
+        console.error("当日分馬券情報の取得に失敗しました:", error);
     }
 };

@@ -34,7 +34,7 @@
 
 .ticketItem {
     display: grid;
-    grid-template-columns: 1fr 2fr 2fr;
+    grid-template-columns: 1fr 2fr 3fr;
     grid-template-rows: repeat(2, auto);
     gap: 0 10px;
     padding: 16px;
