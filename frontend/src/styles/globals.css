@@ -8,6 +8,8 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    /* ダークモード無視 */
+    color-scheme: light !important;
   }
 }
 
