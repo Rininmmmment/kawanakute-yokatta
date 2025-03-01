@@ -1,8 +1,7 @@
 .label {
     display: flex;
     width: 90%;
-    margin: 0 5%;
-    padding: 0 50px 30px;
+    margin: 0 5% 10px;
     gap: 10px;
     align-items: center;
     justify-content: space-between
@@ -11,10 +10,26 @@
 .label input {
     padding: 8px;
     text-align: right;
-    width: 120px;
+    width: 220px;
+    border-radius: 5px;
+    color: #171717;
+}
+
+.label input:disabled {
+    color: gray;
+}
+
+.error {
+    color: red;
+    width: 90%;
+    margin: 10px;
+    text-align: center;
+    height: 30px;
+    font-size: 14px;
 }
 
 .btn {
+    margin-top: 20px;
     text-align: center;
 }
 
@@ -28,6 +43,16 @@
     font-size: 18px;
 }
 
+
 .btn button:hover {
     background-color: rgb(160, 177, 220);
+}
+
+.btn button:disabled {
+    background-color: rgb(177, 179, 185);
+}
+
+.successMessage {
+    width: 90%;
+    margin: 0 5%;
 }
