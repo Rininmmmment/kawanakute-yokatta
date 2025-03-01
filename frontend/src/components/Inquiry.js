@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import styles from '@/styles/Inquiry.module.css';
 import { ticketsDao } from '../lib/ticketsDao';
 import { fetchApi } from '../lib/resultsApi';
+import { calcTickets } from '../lib/ticketUtil';
 
 export default function Inquiry({ userId, balance }) {
     const [display, setDisplay] = useState("menu");
@@ -22,8 +23,7 @@ export default function Inquiry({ userId, balance }) {
         setIsDisable(true);
 
         // 結果未更新馬券データ取得
-        const data = await ticketsDao.getTicketsWithoutResults(userId);
-
+        const tickets = await ticketsDao.getTicketsWithoutResults(userId);
         for (const ticket of tickets) {
             const result = await fetchApi(ticket.raceid);
             const payouts = ticketsDao.calculatePayouts(ticket, result[ticket.tickettype]);

@@ -1,9 +1,11 @@
 import Title from "../components/Title";
 import { insertTicket } from "../lib/vote";
 import { upsertBalance } from "../lib/payment";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from '@/styles/Vote.module.css';
 import Constants from '../constants/constants';
+import { calcTickets } from '../lib/ticketUtil';
+
 
 export default function Vote({ userId, balance }) {
     const [display, setDisplay] = useState(0);
@@ -12,6 +14,7 @@ export default function Vote({ userId, balance }) {
     const [ticketType, setTticketType] = useState(null);
     const [buyType, setBuyType] = useState(null);
     const [horse, setHorse] = useState(null);
+    const [ticketsNum, setticketsNum] = useState(null);
     const [selectedHorses, setSelectedHorses] = useState("");
     const [price, setPrice] = useState("");
     const [raceid, setRaceid] = useState("");
@@ -117,6 +120,13 @@ export default function Vote({ userId, balance }) {
     const handleBack = () => {
         setDisplay(display - 1);
     };
+
+    // 最終画面になったら組数計算
+    useEffect(() => {
+        if (display == 4) {
+            setticketsNum(calcTickets(horse, ticketType, buyType).length);
+        }
+    }, [display]);
 
     return (
         <>
@@ -590,7 +600,13 @@ export default function Vote({ userId, balance }) {
                             );
                         })}
                         <div>
-                            <button onClick={() => { setDisplay(display + 1); setHorse(horse + ":" + selectedHorses); setFormationDisplay(formationDisplay + 1); }}>決定</button>
+                            <button
+                                onClick={() => {
+                                    setDisplay(display + 1);
+                                    setHorse(horse + ":" + selectedHorses);
+                                    // setFormationDisplay(formationDisplay + 1);
+                                }}>決定
+                            </button>
                         </div>
                     </ul>
                 </>
@@ -618,12 +634,19 @@ export default function Vote({ userId, balance }) {
                                 <td>{ticketType}</td>
                             </tr>
                             <tr>
+                                <td>式別</td>
+                                <td>{buyType}</td>
+                            </tr>
+                            <tr>
                                 <td>馬番</td>
                                 <td>{horse}</td>
                             </tr>
                         </tbody>
                     </table>
                     <div>
+                        <div className={styles.voteSetInput}>
+                            <span>組数　{ticketsNum}</span>
+                        </div>
                         <div className={styles.voteSetInput}>
                             <span>金額　</span>
                             <input type="text" onChange={handlePriceChange} />

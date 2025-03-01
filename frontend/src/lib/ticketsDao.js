@@ -1,4 +1,5 @@
 import { collection, addDoc, setDoc, doc, query, where, getDocs, Timestamp } from "firebase/firestore";
+import { calcTickets } from "./ticketUtil";
 import { db } from "../../firebaseConfig";
 
 /**
@@ -110,7 +111,7 @@ class TicketsDao {
      */
     calculatePayouts(data, result) {
         let payouts = 0;
-
+        console.log(result);
         if (data.tickettype === '単勝') {
             if (data.horse === result.horse) {
                 payouts = data.price * parseInt(result.payout, 10) / 100;
@@ -122,16 +123,22 @@ class TicketsDao {
                 }
             });
         } else if (data.tickettype === 'ワイド') {
-            const nums = data.horse.split(",");
-            result.forEach(r => {
-                if (nums.every(h => r.horse.includes(h))) {
-                    payouts = data.price * parseInt(r.payout, 10) / 100;
-                }
-            });
+            const targetTickets = calcTickets(data.horse, data.tickettype, data.buytype);
+            for (let ticket of targetTickets) {
+                const nums = ticket.split(",");
+                result.forEach(r => {
+                    if (nums.every(h => r.horse.includes(h))) {
+                        payouts += data.price * parseInt(r.payout, 10) / 100;
+                    }
+                });
+            }
         } else if (data.tickettype === '3連複') {
-            const nums = data.horse.split(",");
-            if (nums.every(h => result.horse.includes(h))) {
-                payouts = data.price * parseInt(result.payout, 10) / 100;
+            const targetTickets = calcTickets(data.horse, data.tickettype, data.buytype);
+            for (let ticket of targetTickets) {
+                const nums = ticket.split(",");
+                if (nums.every(h => result.horse.includes(h))) {
+                    payouts = data.price * parseInt(result.payout, 10) / 100;
+                }
             }
         }
 
