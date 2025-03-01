@@ -52,6 +52,7 @@ export default function Vote({ userId, balance }) {
                 setDisplay(display + 1);
             } catch (error) {
                 setErrorMsg("処理に失敗しました");
+                console.log(error);
             }
         }
         else {

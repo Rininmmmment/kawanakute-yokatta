@@ -1,8 +1,10 @@
 /**
  * 買い目を展開する
- * @param {string} horse - 馬番
- * @param {string} buytype - 方式
- * @returns {list} - 買い目
+ * 
+ * @param {string} horse - 馬番をカンマ区切りまたはコロン区切りで指定します。
+ * @param {string} tickettype - 馬券のタイプ（例: "単勝", "複勝", "ワイド", "3連複"）
+ * @param {string} buytype - 買い方の方式（例: "通常", "ボックス", "軸一頭ながし", "軸二頭ながし", "フォーメーション"）
+ * @returns {Array<string>} - 計算された買い目のリスト（例: ['2,3,4', '5,6,7']）
  */
 export const calcTickets = (horse, tickettype, buytype) => {
     // 分割

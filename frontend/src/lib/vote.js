@@ -1,7 +1,18 @@
 import { Timestamp } from "firebase/firestore";
 import { ticketsDao } from "./ticketsDao";
 
-// 馬券を購入する
+/**
+ * 馬券を購入する関数
+ * @param {string} userId - ユーザーのID
+ * @param {string} racetrack - 競馬場の名前
+ * @param {string} racenum - レース番号
+ * @param {string} tickettype - チケットの種類（例: 単勝, 複勝, 3連複など）
+ * @param {string} buytype - 購入方式（例: 通常, ボックス, 軸一頭ながし など）
+ * @param {string} horse - 購入する馬の番号（複数の場合カンマ区切りで指定）
+ * @param {number} price - 馬券の購入金額
+ * @param {string} raceid - レースID
+ * @returns {Promise<void>} - チケットが正常に追加された場合、何も返さない
+ */
 export const insertTicket = async (userId, racetrack, racenum, tickettype, buytype, horse, price, raceid) => {
     try {
         // 当日分のみ購入可能
@@ -27,7 +38,11 @@ export const insertTicket = async (userId, racetrack, racenum, tickettype, buyty
     }
 };
 
-// 当日分のチケットを取得
+/**
+ * 当日分のチケットを取得する関数
+ * @param {string} userId - ユーザーのID
+ * @returns {Promise<Array>} - ユーザーの当日分のチケットのリスト
+ */
 export const getTodayTickets = async (userId) => {
     try {
         const tickets = await ticketsDao.getTodayTickets(userId);
