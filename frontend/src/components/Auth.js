@@ -17,8 +17,8 @@ const Auth = () => {
         <div>
             {user ? (
                 <div>
-                    <p>{user.displayName} さん</p>
-                    <button onClick={logout}>ログアウト</button>
+                    {/* <p>{user.displayName} さん</p> */}
+                    <button onClick={logout} style={{ color: "white", padding: "10px 20px", cursor: "pointer" }}>ログアウト</button>
                 </div>
             ) : (
                 <button onClick={signInWithGoogle}>ログイン</button>
