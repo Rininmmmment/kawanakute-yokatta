@@ -142,11 +142,11 @@ class TicketsDao {
                     }
                 }
             }
+            return payouts;
         } catch (error) {
             return -1;
         }
 
-        return payouts;
     }
 }
 
