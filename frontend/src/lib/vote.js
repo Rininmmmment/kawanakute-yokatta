@@ -15,9 +15,7 @@ import { ticketsDao } from "./ticketsDao";
  */
 export const insertTicket = async (userId, racetrack, racenum, tickettype, buytype, horse, price, raceid) => {
     try {
-        // 当日分のみ購入可能
         const date = new Date();
-        date.setHours(0, 0, 0, 0);
 
         const newTicket = {
             userId: userId,

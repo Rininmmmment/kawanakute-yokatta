@@ -38,7 +38,7 @@ export default function Top({ onButtonClick, userId, balance, total, returnRate 
                 </div>
                 <div className={styles.menuContainer}>
                     <div className={styles.menuBtn}>
-                        <button onClick={() => onButtonClick("setting")}>
+                        <button onClick={() => onButtonClick("settings")}>
                             <Image src={settingPic} alt="Profile Picture" width={50} height={50} />
                             <p>設定</p>
                         </button>

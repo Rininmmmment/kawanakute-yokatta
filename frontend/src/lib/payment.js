@@ -43,3 +43,14 @@ export const upsertTotal = async (userId, amount) => {
     const money = await getMoney(userId);
     await updateMoney(userId, { total: (parseInt(money?.total) ?? 0) + parseInt(amount) });
 };
+
+export const resetBalance = async (userId) => {
+    const money = await getMoney(userId);
+    const currentBalance = money.balance;
+    await updateMoney(userId, { balance: parseInt(0) });
+};
+
+export const resetTotal = async (userId) => {
+    const money = await getMoney(userId);
+    await updateMoney(userId, { total: parseInt(0) });
+};

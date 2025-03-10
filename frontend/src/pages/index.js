@@ -9,6 +9,7 @@ import Top from "../components/Top";
 import Payment from "../components/Payment";
 import Vote from "../components/Vote";
 import Inquiry from "../components/Inquiry";
+import Settings from "../components/Settings";
 import styles from '@/styles/Home.module.css';
 
 export default function Home() {
@@ -58,7 +59,7 @@ export default function Home() {
                 </header>
                 <main>
                     {displayTarget !== "top" && (
-                        <button className="top-btn" onClick={() => handleButtonClick("top")}>
+                        <button className="top-btn" onClick={() => window.location.reload()}>
                             トップに戻る
                         </button>
                     )}
@@ -80,8 +81,11 @@ export default function Home() {
                     {displayTarget === "inquiry" && (
                         <Inquiry userId={currentUserId} balance={balance} />
                     )}
+                    {displayTarget === "settings" && (
+                        <Settings userId={currentUserId} balance={balance} />
+                    )}
                 </main>
-            </div>
+            </div >
         </>
     );
 }

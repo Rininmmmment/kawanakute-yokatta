@@ -97,3 +97,7 @@ export const calcTickets = (horse, tickettype, buytype) => {
 // console.log(calcTickets("2:3:6,8,10", "3連複", "軸二頭ながし"));
 // console.log(calcTickets("2:3,6:6,8,10", "3連複", "フォーメーション"));
 // console.log(calcTickets("2", "3連複", "通常"));
+
+export const createRaceDataUrl = (raceid) => {
+    return "https://race.sp.netkeiba.com/?pid=race_result&race_id=" + raceid + "&rf=race_toggle_menu";
+}

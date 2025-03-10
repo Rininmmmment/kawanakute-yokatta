@@ -42,12 +42,12 @@ export default function Vote({ userId, balance }) {
 
     // セットクリック時（=購入時）
     const handleBtnClick = async () => {
-        if (balance >= price) {
+        if (balance >= price * ticketsNum) {
             setErrorMsg("");
             try {
                 setIsDisable(true);
                 await insertTicket(userId, racetrack, raceNum, ticketType, buyType, horse, price, raceid);  // 馬券購入
-                await upsertBalance(userId, -1 * price);  // 残金減らす
+                await upsertBalance(userId, -1 * price * ticketsNum);  // 残金減らす
                 setIsDisable(false);  // 連打防止
                 setDisplay(display + 1);
             } catch (error) {
@@ -118,9 +118,9 @@ export default function Vote({ userId, balance }) {
         setHorse(clickedItemValue);
     };
 
-    const handleBack = () => {
-        setDisplay(display - 1);
-    };
+    // const handleBack = () => {
+    //     setDisplay(display - 1);
+    // };
 
     // 最終画面になったら組数計算
     useEffect(() => {
@@ -131,11 +131,11 @@ export default function Vote({ userId, balance }) {
 
     return (
         <>
-            {display !== 0 && display !== 5 &&
+            {/* {display !== 0 && display !== 5 &&
                 <div>
                     <button onClick={handleBack} className="top-btn">＜ 戻る</button>
                 </div>
-            }
+            } */}
 
             {/* 
                 --------------------------------- 競馬場選択 ---------------------------------

@@ -1,0 +1,44 @@
+.menu li {
+    padding: 16px;
+    list-style: none;
+    border-bottom: 1px solid;
+    border-top: 1px solid;
+}
+
+.reset {
+    padding: 0 20px;
+}
+
+.btnContainer {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btnContainer button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 150px;
+}
+
+.btnContainer button:first-child {
+    background-color: rgb(131, 156, 220);
+    color: white;
+}
+
+.btnContainer button:first-child:hover {
+    background-color: rgb(160, 177, 220);
+}
+
+.btnContainer button:last-child {
+    background-color: #c3c3c3;
+    color: white;
+}
+
+.btnContainer button:last-child:hover {
+    background-color: #dddddd;
+}
