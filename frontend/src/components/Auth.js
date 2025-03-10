@@ -21,7 +21,7 @@ const Auth = () => {
                     <button onClick={logout} style={{ color: "white", padding: "10px 20px", cursor: "pointer" }}>ログアウト</button>
                 </div>
             ) : (
-                <button onClick={signInWithGoogle}>ログイン</button>
+                <button onClick={signInWithGoogle} style={{ color: "white", padding: "10px 20px", cursor: "pointer" }}>ログイン</button>
             )}
         </div>
     );
