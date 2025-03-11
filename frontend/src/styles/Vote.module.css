@@ -49,7 +49,6 @@
 
 .voteListItem:first-child {
     border-top: 1px solid;
-    /* 最初のアイテムには上部ボーダーを付けない */
 }
 
 .voteSetTable {

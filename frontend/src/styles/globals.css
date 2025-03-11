@@ -18,15 +18,11 @@ textarea {
   -webkit-text-size-adjust: 100%;
   /* iPhoneのキーボードによる拡大防止 */
   font-size: 16px;
-  /* 必要に応じてフォントサイズを指定 */
   line-height: 1.5;
-  /* 行間を調整して見やすくする */
 }
 
-/* 入力フィールドのズームを防ぐための追加のスタイル */
 html {
   font-size: 16px;
-  /* HTMLのベースフォントサイズを指定 */
 }
 
 /* モバイル端末でのユーザーズームを制限する */
@@ -81,13 +77,10 @@ button:hover {
   padding: 4px 10px;
 }
 
-li:hover {
+li:active {
   background: #eee;
-  cursor: pointer;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+li:hover {
+  cursor: pointer;
 }

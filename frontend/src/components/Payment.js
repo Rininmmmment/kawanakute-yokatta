@@ -58,9 +58,7 @@ export default function Payment({ userId, balance }) {
                         <span>
                             <input
                                 type="text"
-                                value={depositAmount}
                                 onChange={handleDepositChange}
-                                placeholder="金額を入力"
                                 className={styles.input}
                                 disabled={isProcessing}
                             /> 円
